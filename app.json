@@ -4,11 +4,11 @@
     "slug": "EliteRetail",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/splashicon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/Gemini_Generated_Image_yd051ayd051ayd05.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/Gemini_Generated_Image_yd051ayd051ayd05.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
