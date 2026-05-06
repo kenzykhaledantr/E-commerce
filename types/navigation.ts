@@ -13,16 +13,13 @@ export type AuthStackParamList = {
 };
 
 // ─── Home Stack (nested inside the Home tab) ───────────────────
+// src/types/navigation.ts — update HomeStackParamList
 export type HomeStackParamList = {
   HomeScreen: undefined;
   ProductDetail: { productId: string; productName: string };
   Cart: undefined;
+  Checkout: undefined;
   OrderSuccess: { orderId: string };
-  
-  Checkout: {
-    cartTotal: number;
-    itemCount: number;
-  };
 };
 
 

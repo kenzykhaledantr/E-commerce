@@ -9,6 +9,12 @@ import AuthNavigator from './AuthNavigator';
 import MainNavigator from './MainNavigator';
 import { COLORS } from '../utils/constants';
 
+function MainApp() {
+  // Import here to use inside NavigationContainer
+  const { useNotifications } = require('../hook/useNotifications');
+  useNotifications();
+  return <MainNavigator />;
+}
 // src/navigation/RootNavigator.tsx
 export default function RootNavigator() {
   const { isAuthenticated, isLoading, setUser, setLoading } = useAuthStore();
@@ -48,7 +54,7 @@ export default function RootNavigator() {
 
   return (
     <NavigationContainer>
-      {isAuthenticated ? <MainNavigator /> : <AuthNavigator />}
+       {isAuthenticated ? <MainApp /> : <AuthNavigator />}
     </NavigationContainer>
   );
 }

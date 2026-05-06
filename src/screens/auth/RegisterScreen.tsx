@@ -17,6 +17,7 @@ import type { AuthScreenProps } from '../../../types/navigation';
 import { COLORS, SPACING, RADIUS } from '../../../utils/constants';
 import { registerUser } from '../../../services/authService';
 import { useAuthStore } from '../../../store/authStore';
+import { sendWelcomeNotification } from '../../../services/notificationService';
 
 export default function RegisterScreen({ navigation }: AuthScreenProps<'Register'>) {
   const [displayName, setDisplayName] = useState('');
@@ -44,6 +45,7 @@ export default function RegisterScreen({ navigation }: AuthScreenProps<'Register
     try {
       const user = await registerUser(email.trim(), password, displayName.trim());
       setUser(user);
+      await sendWelcomeNotification(displayName.trim()); // Send welcome notification after successful registration
     } catch (error: any) {
       const message =
         error.code === 'auth/email-already-in-use'
