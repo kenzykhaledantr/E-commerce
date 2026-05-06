@@ -9,6 +9,7 @@ import ProductDetailScreen from '../src/screens/main/ProductDetailScreen';
 import CartScreen from '../src/screens/main/CartScreen';
 import CheckoutScreen from '../src/screens/main/CheckoutScreen';
 import CartTabIcon from '../components/common/CartTabIcon';
+import OrderSuccessScreen from '../src/screens/main/OrderSuccessScreen';
 
 const Stack = createNativeStackNavigator<HomeStackParamList>();
 
@@ -43,7 +44,8 @@ export default function HomeNavigator() {
         options={{
           title: 'YOUR CART',
           animation: 'slide_from_bottom',   // cart slides up from bottom
-            presentation: 'modal',
+          presentation: 'modal',
+            headerShown: false,
           
               }}
               
@@ -51,9 +53,14 @@ export default function HomeNavigator() {
           <Stack.Screen
   name="Checkout"
   component={CheckoutScreen}
+  options={{ headerShown: false }}
+      />
+      <Stack.Screen
+  name="OrderSuccess"
+  component={OrderSuccessScreen}
   options={{
-    title: 'CHECKOUT',
-    animation: 'slide_from_right',
+    headerShown: false,
+    gestureEnabled: false, // prevent swipe back after order
   }}
 />
     </Stack.Navigator>

@@ -20,7 +20,8 @@ import { COLORS, SPACING, RADIUS } from '../../../utils/constants';
 import { useAddToCartAnimation } from '../../../hook/useAddToCartAnimation';
 import * as Haptics from 'expo-haptics';
 import QuantityControl from '../../../components/common/QuantityControl';
-
+import Toast from '../../../components/common/Toast';
+import { useToast } from '../../../hook/useToast';
 
 const { width } = Dimensions.get('window');
 
@@ -34,7 +35,7 @@ export default function ProductDetailScreen({
   const { toggle, isFavorite } = useFavoritesStore();
   const [quantity, setQuantity] = useState(1);
   const { triggerAnimation, dotStyle } = useAddToCartAnimation();
-
+const { toast, showToast, hideToast } = useToast();
   if (isLoading || !product) {
     return (
       <View style={styles.loading}>
@@ -43,19 +44,19 @@ export default function ProductDetailScreen({
     );
   }
 
-  const handleAddToCart = async () => {
-  // Haptic feedback — physical response on real device
-  await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-
-  // Trigger flying dot animation
-  triggerAnimation();
-
-  // Add to cart store
+  const handleAddToCart = () => {
   addItem(product, quantity);
+  showToast(`${product.name} added to cart`, 'success');
 };
 
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>
+      <Toast
+      message={toast.message}
+      type={toast.type}
+      visible={toast.visible}
+      onHide={hideToast}
+    />
       <ScrollView
         style={styles.scroll}
         showsVerticalScrollIndicator={false}
