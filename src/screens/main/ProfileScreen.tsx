@@ -16,18 +16,33 @@ import { useFavoritesStore } from '../../../store/favoritesStore';
 import { logoutUser } from '../../../services/authService';
 import { COLORS, SPACING, RADIUS } from '../../../utils/constants';
 
-const MENU_ITEMS = [
-  { icon: '📍', label: 'Saved Addresses', screen: null },
-  { icon: '💳', label: 'Payment Methods', screen: null },
-  { icon: '⚙️', label: 'Account Settings', screen: null },
-];
+
+
 
 export default function ProfileScreen() {
-  const navigation      = useNavigation<any>();
+  const navigation = useNavigation<any>();
   const user            = useAuthStore((s) => s.user);
   const logout          = useAuthStore((s) => s.logout);
   const { data: orders } = useOrders();
   const favoriteIds     = useFavoritesStore((s) => s.ids);
+
+const MENU_ITEMS = [
+  {
+    icon:    '📍',
+    label:   'Saved Addresses',
+    onPress: () => navigation.navigate('SavedAddresses'),
+  },
+  {
+    icon:    '💳',
+    label:   'Payment Methods',
+    onPress: () => {},
+  },
+  {
+    icon:    '⚙️',
+    label:   'Account Settings',
+    onPress: () => {},
+  },
+];
 
   const handleLogout = async () => {
     Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
@@ -89,7 +104,9 @@ export default function ProfileScreen() {
             <TouchableOpacity
               key={item.label}
               style={styles.menuItem}
+              onPress={item.onPress} 
               activeOpacity={0.7}
+              
             >
               <View style={styles.menuLeft}>
                 <Text style={styles.menuIcon}>{item.icon}</Text>

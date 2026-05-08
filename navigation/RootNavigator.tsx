@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { useAuthStore } from '../store/authStore';
 import AuthNavigator from './AuthNavigator';
-import MainNavigator from './MainNavigator';
+import AppNavigator  from './AppNavigator'; 
 import { COLORS } from '../utils/constants';
 import OfflineBanner from '../components/common/OfflineBanner';
 
@@ -14,7 +14,7 @@ function MainApp() {
   // Import here to use inside NavigationContainer
   const { useNotifications } = require('../hook/useNotifications');
   useNotifications();
-  return <MainNavigator />;
+  return <AppNavigator />;
 }
 // src/navigation/RootNavigator.tsx
 export default function RootNavigator() {

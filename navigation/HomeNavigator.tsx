@@ -10,6 +10,7 @@ import CartScreen from '../src/screens/main/CartScreen';
 import CheckoutScreen from '../src/screens/main/CheckoutScreen';
 import CartTabIcon from '../components/common/CartTabIcon';
 import OrderSuccessScreen from '../src/screens/main/OrderSuccessScreen';
+import SavedAddressesScreen from '../src/screens/main/SavedAddressesScreen';
 
 const Stack = createNativeStackNavigator<HomeStackParamList>();
 
@@ -62,7 +63,8 @@ export default function HomeNavigator() {
     headerShown: false,
     gestureEnabled: false, // prevent swipe back after order
   }}
-/>
+      />
+      
     </Stack.Navigator>
   );
 }

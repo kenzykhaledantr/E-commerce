@@ -76,48 +76,51 @@ export const logoutUser = async (): Promise<void> => {
 // Call this once on app start. It fires immediately with the
 // current user (or null), which sets isLoading → false.
 // src/services/authService.ts (update subscribeToAuthState)
+// src/services/authService.ts
+// Update subscribeToAuthState to ensure user doc exists
+
 export const subscribeToAuthState = (
   onUser: (user: User | null) => void
 ): (() => void) => {
-  console.log('🔥 Setting up auth state listener...');
-  
   return onAuthStateChanged(auth, async (firebaseUser) => {
-    console.log('🔥 Auth state changed:', firebaseUser ? 'User exists' : 'No user');
-    
     if (firebaseUser) {
-      console.log('👤 Firebase user:', {
-        uid: firebaseUser.uid,
-        email: firebaseUser.email,
-        displayName: firebaseUser.displayName,
-      });
-      
-      // Fetch extra profile data from Firestore
       try {
-        const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
-        
+        const userDocRef = doc(db, 'users', firebaseUser.uid);
+        const userDoc    = await getDoc(userDocRef);
+
         if (userDoc.exists()) {
-          console.log('✅ Firestore user doc found');
           const data = userDoc.data();
-          const user = {
-            uid: firebaseUser.uid,
-            email: firebaseUser.email ?? '',
+          onUser({
+            uid:         firebaseUser.uid,
+            email:       firebaseUser.email ?? '',
             displayName: data.displayName ?? firebaseUser.displayName ?? 'User',
-            photoURL: data.photoURL ?? undefined,
-            createdAt: data.createdAt?.toDate() ?? new Date(),
-          };
-          console.log('✅ Calling onUser with:', user);
-          onUser(user);
+            photoURL:    data.photoURL ?? undefined,
+            createdAt:   data.createdAt?.toDate() ?? new Date(),
+          });
         } else {
-          console.log('⚠️ No Firestore doc, using Firebase user');
-          onUser(formatUser(firebaseUser));
+          // ← User doc missing — create it now
+          // This handles users who registered before Firestore write was added
+          await setDoc(userDocRef, {
+            uid:         firebaseUser.uid,
+            email:       firebaseUser.email ?? '',
+            displayName: firebaseUser.displayName ?? 'User',
+            photoURL:    null,
+            createdAt:   serverTimestamp(),
+          });
+          onUser({
+            uid:         firebaseUser.uid,
+            email:       firebaseUser.email ?? '',
+            displayName: firebaseUser.displayName ?? 'User',
+            photoURL:    undefined,
+            createdAt:   new Date(),
+          });
         }
       } catch (error) {
-        console.error('❌ Firestore fetch error:', error);
-        onUser(formatUser(firebaseUser));
+        console.error('Auth state error:', error);
+        onUser(null);
       }
     } else {
-      console.log('🚪 No user, calling onUser(null)');
-      onUser(null); // Not logged in
+      onUser(null);
     }
   });
 };
