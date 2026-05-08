@@ -1,5 +1,5 @@
 // src/screens/main/HomeScreen.tsx
-import React, { useRef, useState, useCallback } from 'react';
+import React, { useRef, useState, useCallback,useMemo } from 'react';
 import {
   View,
   FlatList,
@@ -24,6 +24,11 @@ import { useProducts, useNewArrivals, useProductsByCategory } from '../../../api
 import { useFavoritesStore } from '../../../store/favoritesStore';
 import { COLORS, SPACING } from '../../../utils/constants';
 import type { Product, ProductCategory } from '../../../types';
+
+import {
+  keyExtractor,
+  FLATLIST_PERFORMANCE_PROPS,
+} from'../../../utils/listHelpers';
 
 const { width } = Dimensions.get('window');
 
@@ -56,8 +61,13 @@ export default function HomeScreen() {
   );
 
   // Determine which products to show in the grid
-  const gridProducts =
-    selectedCategory === 'all' ? allProducts : categoryProducts;
+  const gridProducts = useMemo(
+  () =>
+    selectedCategory === 'all'
+      ? allProducts
+      : allProducts?.filter((p) => p.category === selectedCategory),
+  [allProducts, selectedCategory]
+);
 
   const isGridLoading =
     selectedCategory === 'all' ? loadingAll : loadingCategory;
@@ -69,25 +79,32 @@ export default function HomeScreen() {
     setRefreshing(false);
   }, [refetchNew, refetchAll]);
 
-  const goToProduct = (product: Product) => {
+ const goToProduct = useCallback(
+  (product: Product) => {
     navigation.navigate('ProductDetail', {
       productId: product.id,
       productName: product.name,
     });
-  };
+  },
+  [navigation]
+);
 
   // ── Render pieces ──────────────────────────────────────────
 
-  const renderNewArrivalItem = ({ item }: { item: Product }) => (
+  const renderNewArrivalItem = useCallback(
+  ({ item }: { item: Product }) => (
     <ProductCard
       product={item}
       onPress={() => goToProduct(item)}
       onFavorite={() => toggle(item.id)}
       isFavorite={isFavorite(item.id)}
     />
-  );
+  ),
+  [goToProduct, toggle, isFavorite]
+);
 
-  const renderGridItem = ({ item, index }: { item: Product; index: number }) => (
+  const renderGridItem = useCallback(
+  ({ item }: { item: Product }) => (
     <ProductCard
       product={item}
       onPress={() => goToProduct(item)}
@@ -95,7 +112,9 @@ export default function HomeScreen() {
       isFavorite={isFavorite(item.id)}
       width={(width - SPACING.md * 2 - SPACING.sm) / 2}
     />
-  );
+  ),
+  [goToProduct, toggle, isFavorite]
+);
 
   const renderSkeletons = () => (
     <View style={styles.skeletonRow}>
@@ -150,6 +169,7 @@ export default function HomeScreen() {
           data={newArrivals}
           keyExtractor={(item) => item.id}
           renderItem={renderNewArrivalItem}
+          
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.horizontalList}
@@ -194,8 +214,9 @@ export default function HomeScreen() {
         <FlatList
           data={gridProducts ?? []}
           keyExtractor={(item) => item.id}
-          renderItem={renderGridItem}
+           renderItem={renderGridItem}
           numColumns={2}
+          {...FLATLIST_PERFORMANCE_PROPS} 
           ListHeaderComponent={<ListHeader />}
           contentContainerStyle={styles.gridContent}
           columnWrapperStyle={styles.columnWrapper}

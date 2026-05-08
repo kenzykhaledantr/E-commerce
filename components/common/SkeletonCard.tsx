@@ -6,7 +6,7 @@ import { COLORS, RADIUS, SPACING } from '../../utils/constants';
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.44;
 
-export default function SkeletonCard() {
+function SkeletonCard() {
   const shimmer = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export default function SkeletonCard() {
     </Animated.View>
   );
 }
-
+export default React.memo(SkeletonCard);
 const styles = StyleSheet.create({
   card: {
     width: CARD_WIDTH,

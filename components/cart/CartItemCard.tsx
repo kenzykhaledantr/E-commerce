@@ -16,7 +16,7 @@ interface CartItemCardProps {
   item: CartItem;
 }
 
-export default function CartItemCard({ item }: CartItemCardProps) {
+ function CartItemCard({ item }: CartItemCardProps) {
   const { updateQuantity, removeItem } = useCartStore();
 
   // Slide-out animation on delete
@@ -105,6 +105,7 @@ export default function CartItemCard({ item }: CartItemCardProps) {
   );
 }
 
+export default React.memo(CartItemCard);
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
