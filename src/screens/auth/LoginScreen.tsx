@@ -1,9 +1,8 @@
-// src/screens/auth/LoginScreen.tsx
+// src/screens/auth/LoginScreen.tsx — full updated version
 import React, { useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
@@ -17,17 +16,28 @@ import type { AuthScreenProps } from '../../../types/navigation';
 import { COLORS, SPACING, RADIUS } from '../../../utils/constants';
 import { loginUser } from '../../../services/authService';
 import { useAuthStore } from '../../../store/authStore';
+import FormInput from '../../../components/common/FormInput';
+import { validators, validateForm } from '../../../utils/validation';
 
 export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
-  const [email, setEmail] = useState('');
+  const [email,    setEmail]    = useState('');
   const [password, setPassword] = useState('');
+  const [errors,   setErrors]   = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const { setUser } = useAuthStore();
 
   const handleLogin = async () => {
-    if (!email.trim() || !password.trim()) {
-      Alert.alert('Missing fields', 'Please enter your email and password.');
+    // Clear previous errors
+    setErrors({});
+
+    const emailErr    = validators.email(email);
+    const passwordErr = validators.password(password);
+
+    if (emailErr || passwordErr) {
+      setErrors({
+        ...(emailErr    && { email:    emailErr }),
+        ...(passwordErr && { password: passwordErr }),
+      });
       return;
     }
 
@@ -35,7 +45,6 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
     try {
       const user = await loginUser(email.trim(), password);
       setUser(user);
-      // Navigator automatically switches to MainTabs
     } catch (error: any) {
       const message =
         error.code === 'auth/invalid-credential'
@@ -58,59 +67,47 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
         <ScrollView
           contentContainerStyle={styles.container}
           keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          {/* Header */}
           <View style={styles.header}>
             <Text style={styles.brand}>ELITE RETAIL</Text>
             <Text style={styles.title}>Welcome back</Text>
             <Text style={styles.subtitle}>Sign in to your account</Text>
           </View>
 
-          {/* Form */}
           <View style={styles.form}>
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>EMAIL</Text>
-              <TextInput
-                style={styles.input}
-                value={email}
-                onChangeText={setEmail}
-                placeholder="you@example.com"
-                placeholderTextColor={COLORS.textLight}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
-            </View>
+            <FormInput
+              label="EMAIL"
+              value={email}
+              onChangeText={(t) => {
+                setEmail(t);
+                setErrors((e) => ({ ...e, email: '' }));
+              }}
+              placeholder="you@example.com"
+              keyboardType="email-address"
+              error={errors.email}
+            />
 
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>PASSWORD</Text>
-              <View style={styles.passwordRow}>
-                <TextInput
-                  style={[styles.input, styles.passwordInput]}
-                  value={password}
-                  onChangeText={setPassword}
-                  placeholder="••••••••"
-                  placeholderTextColor={COLORS.textLight}
-                  secureTextEntry={!showPassword}
-                  autoCapitalize="none"
-                />
-                <TouchableOpacity
-                  style={styles.eyeButton}
-                  onPress={() => setShowPassword(!showPassword)}
-                >
-                  <Text style={styles.eyeText}>
-                    {showPassword ? 'HIDE' : 'SHOW'}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+            <FormInput
+              label="PASSWORD"
+              value={password}
+              onChangeText={(t) => {
+                setPassword(t);
+                setErrors((e) => ({ ...e, password: '' }));
+              }}
+              placeholder="••••••••"
+              isPassword
+              error={errors.password}
+            />
 
-            {/* Login Button */}
             <TouchableOpacity
-              style={[styles.button, isLoading && styles.buttonDisabled]}
+              style={[
+                styles.button,
+                isLoading && styles.buttonDisabled,
+              ]}
               onPress={handleLogin}
               disabled={isLoading}
-              activeOpacity={0.8}
+              activeOpacity={0.85}
             >
               {isLoading ? (
                 <ActivityIndicator color={COLORS.white} />
@@ -119,9 +116,10 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
               )}
             </TouchableOpacity>
 
-            {/* Register Link */}
             <View style={styles.footer}>
-              <Text style={styles.footerText}>Don't have an account? </Text>
+              <Text style={styles.footerText}>
+                Don't have an account?{' '}
+              </Text>
               <TouchableOpacity
                 onPress={() => navigation.navigate('Register')}
               >
@@ -153,44 +151,15 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
     marginBottom: SPACING.xs,
   },
-  subtitle: {
-    fontSize: 16,
-    color: COLORS.textSecondary,
-  },
+  subtitle: { fontSize: 16, color: COLORS.textSecondary },
   form: { gap: SPACING.md },
-  inputGroup: { gap: SPACING.xs },
-  label: {
-    fontSize: 11,
-    letterSpacing: 2,
-    fontWeight: '600',
-    color: COLORS.textSecondary,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.md,
-    padding: SPACING.md,
-    fontSize: 16,
-    color: COLORS.textPrimary,
-    backgroundColor: COLORS.offWhite,
-  },
-  passwordRow: { flexDirection: 'row', alignItems: 'center' },
-  passwordInput: { flex: 1 },
-  eyeButton: { padding: SPACING.md, marginLeft: SPACING.sm },
-  eyeText: {
-    fontSize: 11,
-    letterSpacing: 1,
-    fontWeight: '600',
-    color: COLORS.textSecondary,
-  },
   button: {
     backgroundColor: COLORS.primary,
-    padding: SPACING.md,
+    height: 54,
     borderRadius: RADIUS.md,
     alignItems: 'center',
-    marginTop: SPACING.sm,
-    height: 54,
     justifyContent: 'center',
+    marginTop: SPACING.sm,
   },
   buttonDisabled: { opacity: 0.6 },
   buttonText: {

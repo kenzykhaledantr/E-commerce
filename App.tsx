@@ -1,4 +1,4 @@
-// App.tsx
+// App.tsx — final production version
 import 'react-native-gesture-handler';
 
 import React, { useEffect } from 'react';
@@ -6,34 +6,42 @@ import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, LogBox } from 'react-native';
+
 import RootNavigator from './navigation/RootNavigator';
+import ErrorBoundary from './components/common/ErrorBoundary';
 import { useAuthStore } from './store/authStore';
 import { subscribeToAuthState } from './services/authService';
+import { onQueryError } from './utils/queryErrorHandler';
+
+// Suppress known harmless warnings in Expo Go
+LogBox.ignoreLogs([
+  'Non-serializable values were found in the navigation state',
+  'VirtualizedLists should never be nested',
+]);
 
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries: { staleTime: 1000 * 60 * 5, retry: 2 },
+    queries: {
+      staleTime: 1000 * 60 * 5,
+      retry: (failureCount, error: any) => {
+        if (error?.code === 'permission-denied') return false;
+        return failureCount < 2;
+      },
+      gcTime: 1000 * 60 * 10,
+    },
+    mutations: {
+      onError: onQueryError,
+    },
   },
 });
 
-// Separate component so we can use Zustand inside
-// App.tsx (update AppContent)
 function AppContent() {
   const { setUser } = useAuthStore();
 
   useEffect(() => {
-    console.log('🚀 App mounted, subscribing to auth state...');
-    
-    const unsubscribe = subscribeToAuthState((user) => {
-      console.log('📞 Auth callback received:', user ? 'User object' : 'null');
-      setUser(user);
-    });
-
-    return () => {
-      console.log('🛑 App unmounting, unsubscribing...');
-      unsubscribe();
-    };
+    const unsubscribe = subscribeToAuthState((user) => setUser(user));
+    return unsubscribe;
   }, []);
 
   return <RootNavigator />;
@@ -44,13 +52,14 @@ export default function App() {
     <GestureHandlerRootView style={styles.container}>
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
-          <StatusBar style="dark" />
-          <AppContent />
+          <ErrorBoundary>
+            <StatusBar style="dark" />
+            <AppContent />
+          </ErrorBoundary>
         </QueryClientProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
-  
 }
 
 const styles = StyleSheet.create({

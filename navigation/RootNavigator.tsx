@@ -8,6 +8,7 @@ import { useAuthStore } from '../store/authStore';
 import AuthNavigator from './AuthNavigator';
 import MainNavigator from './MainNavigator';
 import { COLORS } from '../utils/constants';
+import OfflineBanner from '../components/common/OfflineBanner';
 
 function MainApp() {
   // Import here to use inside NavigationContainer
@@ -54,6 +55,7 @@ export default function RootNavigator() {
 
   return (
     <NavigationContainer>
+      <OfflineBanner />
        {isAuthenticated ? <MainApp /> : <AuthNavigator />}
     </NavigationContainer>
   );

@@ -22,7 +22,7 @@ interface ProductCardProps {
   width?: number;
 }
 
-export default function ProductCard({
+ function ProductCard({
   product,
   onPress,
   onFavorite,
@@ -118,7 +118,14 @@ export default function ProductCard({
     </Animated.View>
   );
 }
-
+export default React.memo(ProductCard, (prev, next) => {
+  // Only re-render if these props changed
+  return (
+    prev.product.id    === next.product.id &&
+    prev.isFavorite    === next.isFavorite &&
+    prev.width         === next.width
+  );
+});
 const styles = StyleSheet.create({
   card: {
     backgroundColor: COLORS.white,
