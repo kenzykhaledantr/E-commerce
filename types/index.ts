@@ -58,13 +58,16 @@ export type OrderStatus =
   | 'delivered'
   | 'cancelled';
 
+// src/types/index.ts — update Address interface
 export interface Address {
-  label: string;               // 'Home' | 'Office' | etc.
+  id: string;
+  label: string;          // 'Home' | 'Office' | 'Other'
   fullName: string;
   street: string;
   city: string;
   postalCode: string;
   phone: string;
+  isDefault: boolean;
 }
 
 export interface DeliveryMethod {

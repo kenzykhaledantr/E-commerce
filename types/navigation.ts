@@ -20,6 +20,13 @@ export type HomeStackParamList = {
   Cart: undefined;
   Checkout: undefined;
   OrderSuccess: { orderId: string };
+  SavedAddresses: undefined; // ← add this
+};
+
+export type AppStackParamList = {
+  MainTabs:       undefined;          // the bottom tabs
+  SavedAddresses: undefined;          // ← moved here
+  // add more shared screens here as needed
 };
 
 
@@ -44,6 +51,8 @@ export type HomeScreenProps<T extends keyof HomeStackParamList> =
     BottomTabScreenProps<MainTabParamList>
   >;
 
+  export type AppScreenProps<T extends keyof AppStackParamList> =
+  NativeStackScreenProps<AppStackParamList, T>;
 // ─── Global navigation type override ──────────────────────────
 // This tells React Navigation's useNavigation() hook about ALL screens
 declare global {
