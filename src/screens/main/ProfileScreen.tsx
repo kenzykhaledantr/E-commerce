@@ -15,6 +15,7 @@ import { useOrders } from '../../../api/useOrders';
 import { useFavoritesStore } from '../../../store/favoritesStore';
 import { logoutUser } from '../../../services/authService';
 import { COLORS, SPACING, RADIUS } from '../../../utils/constants';
+import { useTheme } from '../../../hook/useTheme';
 
 
 
@@ -24,7 +25,8 @@ export default function ProfileScreen() {
   const user            = useAuthStore((s) => s.user);
   const logout          = useAuthStore((s) => s.logout);
   const { data: orders } = useOrders();
-  const favoriteIds     = useFavoritesStore((s) => s.ids);
+  const favoriteIds = useFavoritesStore((s) => s.ids);
+  const { colors: C } = useTheme();
 
 const MENU_ITEMS = [
   {
@@ -35,12 +37,12 @@ const MENU_ITEMS = [
   {
     icon:    '💳',
     label:   'Payment Methods',
-    onPress: () => {},
+    onPress: () => navigation.navigate('PaymentMethods'),
   },
   {
     icon:    '⚙️',
     label:   'Account Settings',
-    onPress: () => {},
+    onPress: () => navigation.navigate('AccountSettings'),
   },
 ];
 
@@ -62,48 +64,61 @@ const MENU_ITEMS = [
     name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>ELITE RETAIL</Text>
+    <SafeAreaView style={[styles.safe, { backgroundColor: C.background }]}>
+      <View style={[styles.header, {
+        backgroundColor:  C.surface,
+        borderBottomColor: C.border,
+      }]}>
+        <Text style={[styles.headerTitle, { color: C.text }]}>ELITE RETAIL</Text>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Profile card */}
-        <View style={styles.profileCard}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>
+        <View style={[styles.profileCard, {
+          backgroundColor: C.surface,
+          borderBottomColor: C.border,
+        }]}>
+          <View style={[styles.avatar, { backgroundColor: C.primary }]}>
+            <Text style={[styles.avatarText, { color: C.surface }]}>
               {getInitials(user?.displayName ?? 'U')}
             </Text>
           </View>
           <View style={styles.profileInfo}>
-            <Text style={styles.displayName}>{user?.displayName}</Text>
-            <Text style={styles.memberLabel}>Platinum Member since 2024</Text>
+            <Text style={[styles.displayName, { color: C.text }]}>{user?.displayName}</Text>
+            <Text style={[styles.memberLabel, { color: C.textSecondary }]}>Platinum Member since 2024</Text>
           </View>
         </View>
 
         {/* Stats */}
-        <View style={styles.statsRow}>
+        <View style={[styles.statsRow, {
+          backgroundColor: C.surface,
+          borderColor:     C.border,
+        }]}>
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>{orders?.length ?? 0}</Text>
-            <Text style={styles.statLabel}>MY ORDERS</Text>
-            <Text style={styles.statSub}>
+            <Text style={[styles.statValue,  { color: C.text }]}>{orders?.length ?? 0}</Text>
+            <Text style={[styles.statLabel,  { color: C.textSecondary }]}>MY ORDERS</Text>
+            <Text style={[styles.statSub,    { color: C.textLight }]}>
               {orders?.filter((o) => o.status === 'confirmed').length ?? 0} Active
             </Text>
           </View>
-          <View style={styles.statDivider} />
+          <View style={[styles.statDivider, { backgroundColor: C.border }]} />
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>{favoriteIds.length}</Text>
-            <Text style={styles.statLabel}>WISHLIST</Text>
-            <Text style={styles.statSub}>{favoriteIds.length} Items</Text>
+            <Text style={[styles.statValue,  { color: C.text }]}>{favoriteIds.length}</Text>
+            <Text style={[styles.statLabel,  { color: C.textSecondary }]}>WISHLIST</Text>
+            <Text style={[styles.statSub,    { color: C.textLight }]}>{favoriteIds.length} Items</Text>
           </View>
         </View>
 
         {/* Menu items */}
-        <View style={styles.menuSection}>
+        <View style={[styles.menuSection, {
+          backgroundColor:  C.surface,
+          borderTopColor:   C.border,
+          borderBottomColor: C.border,
+        }]}>
           {MENU_ITEMS.map((item) => (
             <TouchableOpacity
               key={item.label}
-              style={styles.menuItem}
+              style={[styles.menuItem, { borderBottomColor: C.border }]}
               onPress={item.onPress} 
               activeOpacity={0.7}
               
@@ -112,19 +127,19 @@ const MENU_ITEMS = [
                 <Text style={styles.menuIcon}>{item.icon}</Text>
                 <Text style={styles.menuLabel}>{item.label}</Text>
               </View>
-              <Text style={styles.menuArrow}>›</Text>
+              <Text style={[styles.menuArrow, { color: C.textLight }]}>›</Text>
             </TouchableOpacity>
           ))}
 
           {/* Logout */}
           <TouchableOpacity
-            style={[styles.menuItem, styles.logoutItem]}
+            style={[styles.menuItem, styles.logoutItem, { borderBottomColor: C.border }]}
             onPress={handleLogout}
             activeOpacity={0.7}
           >
             <View style={styles.menuLeft}>
               <Text style={styles.menuIcon}>↪</Text>
-              <Text style={[styles.menuLabel, styles.logoutLabel]}>Logout</Text>
+              <Text style={[styles.menuLabel, { color: C.error }]}>Logout</Text>
             </View>
           </TouchableOpacity>
         </View>

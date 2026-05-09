@@ -5,6 +5,8 @@ import type { AppStackParamList } from '../types/navigation';
 
 import MainNavigator from './MainNavigator';
 import SavedAddressesScreen from '../src/screens/main/SavedAddressesScreen';
+import PaymentMethodsScreen from '../src/screens/main/PaymentMethodsScreen';
+import AccountSettingsScreen from '../src/screens/main/AccountSettingsScreen';
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
@@ -23,6 +25,19 @@ export default function AppNavigator() {
           animation:    'slide_from_right',
         }}
       />
+      <Stack.Screen
+  name="PaymentMethods"
+  component={PaymentMethodsScreen}
+  options={{
+    headerShown: false,
+    animation:   'slide_from_right',
+  }}
+      />
+      <Stack.Screen
+  name="AccountSettings"
+  component={AccountSettingsScreen}
+  options={{ headerShown: false, animation: 'slide_from_right' }}
+/>
     </Stack.Navigator>
   );
 }
