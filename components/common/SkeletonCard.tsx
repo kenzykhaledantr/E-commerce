@@ -2,12 +2,14 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Animated, StyleSheet, Dimensions } from 'react-native';
 import { COLORS, RADIUS, SPACING } from '../../utils/constants';
+import { useTheme } from '../../hook/useTheme';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.44;
 
 function SkeletonCard() {
   const shimmer = useRef(new Animated.Value(0)).current;
+  const { colors:C } = useTheme();
 
   useEffect(() => {
     Animated.loop(
@@ -32,12 +34,12 @@ function SkeletonCard() {
   });
 
   return (
-    <Animated.View style={[styles.card, { opacity }]}>
+    <Animated.View style={[styles.card, { opacity,backgroundColor:C.background }]}>
       <View style={styles.image} />
-      <View style={styles.body}>
-        <View style={styles.lineShort} />
+      <View style={[styles.body, { backgroundColor: C.background }]}>
+        <View style={[styles.lineShort,{backgroundColor:C.background}]} />
         <View style={styles.lineLong} />
-        <View style={styles.linePrice} />
+        <View style={[styles.linePrice,{backgroundColor:C.text}]} />
       </View>
     </Animated.View>
   );

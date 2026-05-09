@@ -8,7 +8,8 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-import { COLORS, SPACING, RADIUS } from '../../utils/constants';
+import { SPACING, RADIUS } from '../../utils/constants';
+import { useTheme } from '../../hook/useTheme';
 import type { PaymentCard } from '../../types';
 
 const TYPE_ICONS: Record<PaymentCard['cardType'], string> = {
@@ -29,6 +30,7 @@ export default function CardItem({
   onDelete,
   onSetDefault,
 }: CardItemProps) {
+  const { colors: C } = useTheme();
   const scale = useRef(new Animated.Value(1)).current;
 
   const handlePressIn = () =>
@@ -58,7 +60,8 @@ export default function CardItem({
       <TouchableOpacity
         style={[
           styles.card,
-          card.isDefault && styles.cardDefault,
+          { backgroundColor: C.card, borderColor: card.isDefault ? C.accent : C.border },
+          card.isDefault && { borderWidth: 1.5 },
         ]}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
@@ -73,34 +76,34 @@ export default function CardItem({
 
         <View style={styles.info}>
           <View style={styles.topRow}>
-            <Text style={styles.cardType}>
+            <Text style={[styles.cardType, { color: C.textSecondary }]}>
               {card.cardType.toUpperCase()}
             </Text>
             {card.isDefault && (
-              <View style={styles.defaultBadge}>
-                <Text style={styles.defaultBadgeText}>DEFAULT</Text>
+              <View style={[styles.defaultBadge, { backgroundColor: C.accent }]}>
+                <Text style={[styles.defaultBadgeText, { color: C.textInverse }]}>DEFAULT</Text>
               </View>
             )}
           </View>
-          <Text style={styles.cardNumber}>
+          <Text style={[styles.cardNumber, { color: C.text }]}>
             •••• •••• •••• {card.lastFour}
           </Text>
           <View style={styles.metaRow}>
-            <Text style={styles.holder} numberOfLines={1}>
+            <Text style={[styles.holder, { color: C.textSecondary }]} numberOfLines={1}>
               {card.cardHolder}
             </Text>
-            <Text style={styles.expiry}>{card.expiry}</Text>
+            <Text style={[styles.expiry, { color: C.textLight }]}>{card.expiry}</Text>
           </View>
         </View>
 
         {/* Right — actions */}
         <View style={styles.actions}>
           <TouchableOpacity
-            style={styles.actionBtn}
+            style={[styles.actionBtn, { backgroundColor: C.skeletonBase }]}
             onPress={handleDelete}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <Text style={styles.deleteIcon}>🗑</Text>
+            <Text style={[styles.deleteIcon, { color: C.textSecondary }]}>🗑</Text>
           </TouchableOpacity>
         </View>
       </TouchableOpacity>
@@ -108,10 +111,10 @@ export default function CardItem({
       {/* Set as default */}
       {!card.isDefault && (
         <TouchableOpacity
-          style={styles.setDefaultBtn}
+          style={[styles.setDefaultBtn, { borderColor: C.border }]}
           onPress={onSetDefault}
         >
-          <Text style={styles.setDefaultText}>SET AS DEFAULT</Text>
+          <Text style={[styles.setDefaultText, { color: C.textSecondary }]}>SET AS DEFAULT</Text>
         </TouchableOpacity>
       )}
     </Animated.View>
@@ -122,20 +125,14 @@ const styles = StyleSheet.create({
   card: {
     flexDirection:   'row',
     alignItems:      'center',
-    backgroundColor: COLORS.white,
     borderRadius:    RADIUS.md,
     borderWidth:     1,
-    borderColor:     COLORS.border,
     overflow:        'hidden',
     shadowColor:     '#000',
     shadowOffset:    { width: 0, height: 2 },
     shadowOpacity:   0.05,
     shadowRadius:    8,
     elevation:       2,
-  },
-  cardDefault: {
-    borderColor: COLORS.accent,
-    borderWidth: 1.5,
   },
   colorBar: {
     width:          52,
@@ -158,10 +155,8 @@ const styles = StyleSheet.create({
     fontSize:      10,
     letterSpacing: 2,
     fontWeight:    '700',
-    color:         COLORS.textSecondary,
   },
   defaultBadge: {
-    backgroundColor:  COLORS.accent,
     paddingHorizontal: 6,
     paddingVertical:   2,
     borderRadius:     RADIUS.full,
@@ -169,13 +164,11 @@ const styles = StyleSheet.create({
   defaultBadgeText: {
     fontSize:      9,
     fontWeight:    '700',
-    color:         COLORS.white,
     letterSpacing: 1,
   },
   cardNumber: {
     fontSize:      16,
     fontWeight:    '600',
-    color:         COLORS.textPrimary,
     letterSpacing: 2,
   },
   metaRow: {
@@ -185,12 +178,10 @@ const styles = StyleSheet.create({
   },
   holder: {
     fontSize: 12,
-    color:    COLORS.textSecondary,
     flex:     1,
   },
   expiry: {
     fontSize:   12,
-    color:      COLORS.textLight,
     fontWeight: '500',
   },
   actions: {
@@ -203,7 +194,6 @@ const styles = StyleSheet.create({
     height:         36,
     alignItems:     'center',
     justifyContent: 'center',
-    backgroundColor: COLORS.offWhite,
     borderRadius:   RADIUS.sm,
   },
   deleteIcon:    { fontSize: 15 },
@@ -214,13 +204,11 @@ const styles = StyleSheet.create({
     paddingVertical:   5,
     paddingHorizontal: SPACING.sm,
     borderWidth:       1,
-    borderColor:       COLORS.border,
     borderRadius:      RADIUS.full,
   },
   setDefaultText: {
     fontSize:      10,
     letterSpacing: 1.5,
     fontWeight:    '600',
-    color:         COLORS.textSecondary,
   },
 });

@@ -9,11 +9,13 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { COLORS, SPACING, RADIUS } from '../../../utils/constants';
+import { SPACING, RADIUS } from '../../../utils/constants';
+import { useTheme } from '../../../hook/useTheme';
 
 export default function OrderSuccessScreen() {
   const navigation = useNavigation<any>();
   const route      = useRoute<any>();
+  const { colors: C } = useTheme();
   const { orderId } = route.params;
 
   // Celebration animation
@@ -37,41 +39,41 @@ export default function OrderSuccessScreen() {
   }, []);
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: C.background }]}>
       <Animated.View style={[styles.container, { opacity }]}>
         {/* Success icon */}
         <Animated.View
-          style={[styles.iconContainer, { transform: [{ scale }] }]}
+          style={[styles.iconContainer, { backgroundColor: C.accent, transform: [{ scale }] }]}
         >
-          <Text style={styles.icon}>✓</Text>
+          <Text style={[styles.icon, { color: C.textInverse }]}>✓</Text>
         </Animated.View>
 
-        <Text style={styles.title}>Order Confirmed!</Text>
-        <Text style={styles.subtitle}>
+        <Text style={[styles.title, { color: C.text }]}>Order Confirmed!</Text>
+        <Text style={[styles.subtitle, { color: C.textSecondary }]}>
           Your order has been placed successfully.
         </Text>
 
-        <View style={styles.orderIdBox}>
-          <Text style={styles.orderIdLabel}>ORDER ID</Text>
-          <Text style={styles.orderId}>#{orderId.slice(-8).toUpperCase()}</Text>
+        <View style={[styles.orderIdBox, { backgroundColor: C.skeletonBase, borderColor: C.border }]}>
+          <Text style={[styles.orderIdLabel, { color: C.textLight }]}>ORDER ID</Text>
+          <Text style={[styles.orderId, { color: C.text }]}>#{orderId.slice(-8).toUpperCase()}</Text>
         </View>
 
-        <Text style={styles.message}>
+        <Text style={[styles.message, { color: C.textSecondary }]}>
           You will receive a confirmation notification shortly. Track your order in the Profile section.
         </Text>
 
         <TouchableOpacity
-          style={styles.primaryBtn}
+          style={[styles.primaryBtn, { backgroundColor: C.primary }]}
           onPress={() => navigation.navigate('HomeScreen')}
         >
-          <Text style={styles.primaryBtnText}>CONTINUE SHOPPING</Text>
+          <Text style={[styles.primaryBtnText, { color: C.textInverse }]}>CONTINUE SHOPPING</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.secondaryBtn}
+          style={[styles.secondaryBtn, { borderColor: C.border }]}
           onPress={() => navigation.navigate('Profile')}
         >
-          <Text style={styles.secondaryBtnText}>VIEW MY ORDERS</Text>
+          <Text style={[styles.secondaryBtnText, { color: C.text }]}>VIEW MY ORDERS</Text>
         </TouchableOpacity>
       </Animated.View>
     </SafeAreaView>
@@ -79,7 +81,7 @@ export default function OrderSuccessScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: COLORS.white },
+  safe: { flex: 1 },
   container: {
     flex: 1,
     alignItems: 'center',
@@ -91,49 +93,43 @@ const styles = StyleSheet.create({
     width: 90,
     height: 90,
     borderRadius: 45,
-    backgroundColor: COLORS.accent,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: SPACING.sm,
   },
-  icon: { fontSize: 42, color: COLORS.white, fontWeight: '700' },
-  title: { fontSize: 28, fontWeight: '700', color: COLORS.textPrimary, textAlign: 'center' },
-  subtitle: { fontSize: 16, color: COLORS.textSecondary, textAlign: 'center' },
+  icon: { fontSize: 42, fontWeight: '700' },
+  title: { fontSize: 28, fontWeight: '700', textAlign: 'center' },
+  subtitle: { fontSize: 16, textAlign: 'center' },
   orderIdBox: {
-    backgroundColor: COLORS.offWhite,
     borderRadius: RADIUS.md,
     padding: SPACING.md,
     alignItems: 'center',
     width: '100%',
     borderWidth: 0.5,
-    borderColor: COLORS.border,
   },
-  orderIdLabel: { fontSize: 10, letterSpacing: 3, color: COLORS.textLight, fontWeight: '600' },
-  orderId: { fontSize: 22, fontWeight: '700', color: COLORS.textPrimary, marginTop: 4 },
+  orderIdLabel: { fontSize: 10, letterSpacing: 3, fontWeight: '600' },
+  orderId: { fontSize: 22, fontWeight: '700', marginTop: 4 },
   message: {
     fontSize: 14,
-    color: COLORS.textSecondary,
     textAlign: 'center',
     lineHeight: 22,
   },
   primaryBtn: {
     width: '100%',
     height: 54,
-    backgroundColor: COLORS.primary,
     borderRadius: RADIUS.md,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: SPACING.sm,
   },
-  primaryBtnText: { color: COLORS.white, fontWeight: '700', fontSize: 13, letterSpacing: 2 },
+  primaryBtnText: { fontWeight: '700', fontSize: 13, letterSpacing: 2 },
   secondaryBtn: {
     width: '100%',
     height: 54,
     borderWidth: 1.5,
-    borderColor: COLORS.border,
     borderRadius: RADIUS.md,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  secondaryBtnText: { color: COLORS.textPrimary, fontWeight: '700', fontSize: 13, letterSpacing: 2 },
+  secondaryBtnText: { fontWeight: '700', fontSize: 13, letterSpacing: 2 },
 });

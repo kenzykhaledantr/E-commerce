@@ -8,7 +8,8 @@ import {
   Dimensions,
   Image,
 } from 'react-native';
-import { COLORS, SPACING, RADIUS } from '../../utils/constants';
+import { SPACING, RADIUS } from '../../utils/constants';
+import { useTheme } from '../../hook/useTheme';
 import type { Product } from '../../types';
 
 const { width } = Dimensions.get('window');
@@ -29,6 +30,7 @@ interface ProductCardProps {
   isFavorite = false,
   width: cardWidth = CARD_WIDTH,
 }: ProductCardProps) {
+  const { colors: C } = useTheme();
   // Use React Native's built-in Animated — works everywhere
   const scale = useRef(new Animated.Value(1)).current;
 
@@ -57,13 +59,13 @@ interface ProductCardProps {
   return (
     <Animated.View style={[{ transform: [{ scale }] }, { width: cardWidth }]}>
       <TouchableOpacity
-        style={styles.card}
+        style={[styles.card, { backgroundColor: C.card, borderColor: C.border }]}
         onPress={onPress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         activeOpacity={1}
       >
-        <View style={styles.imageContainer}>
+        <View style={[styles.imageContainer, { backgroundColor: C.skeletonBase }]}>
           <Image
             source={{ uri: product.images[0] }}
             style={styles.image}
@@ -71,23 +73,23 @@ interface ProductCardProps {
           />
 
           {discount ? (
-            <View style={styles.discountBadge}>
-              <Text style={styles.discountText}>-{discount}%</Text>
+            <View style={[styles.discountBadge, { backgroundColor: C.error }]}>
+              <Text style={[styles.discountText, { color: C.textInverse }]}>-{discount}%</Text>
             </View>
           ) : (
-            <View style={styles.newBadge}>
-              <Text style={styles.newText}>NEW</Text>
+            <View style={[styles.newBadge, { backgroundColor: C.primary }]}>
+              <Text style={[styles.newText, { color: C.textInverse }]}>NEW</Text>
             </View>
           )}
 
           <TouchableOpacity
-            style={styles.favoriteBtn}
+            style={[styles.favoriteBtn, { backgroundColor: C.card }]}
             onPress={onFavorite}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
             <Text style={[
               styles.favoriteIcon,
-              isFavorite && styles.favoriteIconActive,
+              { color: isFavorite ? '#E63946' : C.textLight },
             ]}>
               {isFavorite ? '♥' : '♡'}
             </Text>
@@ -95,20 +97,20 @@ interface ProductCardProps {
         </View>
 
         <View style={styles.info}>
-          <Text style={styles.category} numberOfLines={1}>
+          <Text style={[styles.category, { color: C.textLight }]} numberOfLines={1}>
             {product.category.toUpperCase()}
           </Text>
-          <Text style={styles.name} numberOfLines={2}>
+          <Text style={[styles.name, { color: C.text }]} numberOfLines={2}>
             {product.name}
           </Text>
           <View style={styles.ratingRow}>
             <Text style={styles.star}>★</Text>
-            <Text style={styles.rating}>{product.rating.toFixed(1)}</Text>
+            <Text style={[styles.rating, { color: C.textSecondary }]}>{product.rating.toFixed(1)}</Text>
           </View>
           <View style={styles.priceRow}>
-            <Text style={styles.price}>${product.price.toFixed(2)}</Text>
+            <Text style={[styles.price, { color: C.text }]}>${product.price.toFixed(2)}</Text>
             {product.originalPrice && (
-              <Text style={styles.originalPrice}>
+              <Text style={[styles.originalPrice, { color: C.textLight }]}>
                 ${product.originalPrice.toFixed(2)}
               </Text>
             )}
@@ -128,11 +130,9 @@ export default React.memo(ProductCard, (prev, next) => {
 });
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: COLORS.white,
     borderRadius: RADIUS.md,
     overflow: 'hidden',
     borderWidth: 0.5,
-    borderColor: COLORS.border,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
@@ -142,7 +142,6 @@ const styles = StyleSheet.create({
   imageContainer: {
     width: '100%',
     aspectRatio: 0.85,
-    backgroundColor: COLORS.offWhite,
     position: 'relative',
   },
   image: { width: '100%', height: '100%' },
@@ -150,23 +149,20 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: SPACING.sm,
     left: SPACING.sm,
-    backgroundColor: COLORS.error,
     paddingHorizontal: 6,
     paddingVertical: 3,
     borderRadius: RADIUS.sm,
   },
-  discountText: { color: COLORS.white, fontSize: 10, fontWeight: '700' },
+  discountText: { fontSize: 10, fontWeight: '700' },
   newBadge: {
     position: 'absolute',
     top: SPACING.sm,
     left: SPACING.sm,
-    backgroundColor: COLORS.primary,
     paddingHorizontal: 6,
     paddingVertical: 3,
     borderRadius: RADIUS.sm,
   },
   newText: {
-    color: COLORS.white,
     fontSize: 10,
     fontWeight: '700',
     letterSpacing: 1,
@@ -177,39 +173,34 @@ const styles = StyleSheet.create({
     right: SPACING.sm,
     width: 32,
     height: 32,
-    backgroundColor: 'rgba(255,255,255,0.92)',
     borderRadius: RADIUS.full,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  favoriteIcon: { fontSize: 16, color: COLORS.textLight },
-  favoriteIconActive: { color: '#E63946' },
+  favoriteIcon: { fontSize: 16 },
   info: { padding: SPACING.sm, gap: 4 },
   category: {
     fontSize: 9,
     letterSpacing: 2,
-    color: COLORS.textLight,
     fontWeight: '600',
   },
   name: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.textPrimary,
     lineHeight: 18,
   },
   ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 2 },
   star: { fontSize: 11, color: '#F4A261' },
-  rating: { fontSize: 11, color: COLORS.textSecondary, fontWeight: '500' },
+  rating: { fontSize: 11, fontWeight: '500' },
   priceRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: SPACING.xs,
     marginTop: 2,
   },
-  price: { fontSize: 15, fontWeight: '700', color: COLORS.textPrimary },
+  price: { fontSize: 15, fontWeight: '700' },
   originalPrice: {
     fontSize: 12,
-    color: COLORS.textLight,
     textDecorationLine: 'line-through',
   },
 });

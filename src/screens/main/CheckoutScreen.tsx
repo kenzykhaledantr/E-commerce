@@ -19,7 +19,8 @@ import { useAuthStore } from '../../../store/authStore';
 import { useCreateOrder } from '../../../api/useOrders';
 import { useAddresses } from '../../../api/useAddresses';
 import { sendOrderConfirmationNotification } from '../../../services/notificationService';
-import { COLORS, SPACING, RADIUS } from '../../../utils/constants';
+import { SPACING, RADIUS } from '../../../utils/constants';
+import { useTheme } from '../../../hook/useTheme';
 import type { Address } from '../../../types';
 
 const STEPS = ['Shipping', 'Delivery', 'Payment'];
@@ -48,6 +49,7 @@ const PAYMENT_OPTIONS = [
 
 export default function CheckoutScreen() {
   const navigation  = useNavigation<any>();
+  const { colors: C } = useTheme();
   const { items, totalPrice, clearCart } = useCartStore();
   const user        = useAuthStore((s) => s.user);
   const createOrder = useCreateOrder();
@@ -101,7 +103,7 @@ export default function CheckoutScreen() {
 
   // ── Step indicator ─────────────────────────────────────────
   const StepIndicator = () => (
-    <View style={styles.stepRow}>
+    <View style={[styles.stepRow, { backgroundColor: C.surface, borderBottomColor: C.border }]}>
       {STEPS.map((s, i) => (
         <React.Fragment key={s}>
           <TouchableOpacity
@@ -110,15 +112,17 @@ export default function CheckoutScreen() {
           >
             <View style={[
               styles.stepCircle,
-              i <= step && styles.stepCircleActive,
-              i < step  && styles.stepCircleDone,
+              { backgroundColor: C.surface, borderColor: C.border },
+              i <= step && { borderColor: C.primary },
+              i < step  && { backgroundColor: C.primary, borderColor: C.primary },
             ]}>
               {i < step ? (
-                <Text style={styles.stepCheckmark}>✓</Text>
+                <Text style={[styles.stepCheckmark, { color: C.textInverse }]}>✓</Text>
               ) : (
                 <Text style={[
                   styles.stepNumber,
-                  i === step && styles.stepNumberActive,
+                  { color: C.textLight },
+                  i === step && { color: C.primary },
                 ]}>
                   {i + 1}
                 </Text>
@@ -126,7 +130,8 @@ export default function CheckoutScreen() {
             </View>
             <Text style={[
               styles.stepLabel,
-              i === step && styles.stepLabelActive,
+              { color: C.textLight },
+              i === step && { color: C.text, fontWeight: '700' },
             ]}>
               {s}
             </Text>
@@ -135,7 +140,8 @@ export default function CheckoutScreen() {
           {i < STEPS.length - 1 && (
             <View style={[
               styles.stepLine,
-              i < step && styles.stepLineDone,
+              { backgroundColor: C.border },
+              i < step && { backgroundColor: C.primary },
             ]} />
           )}
         </React.Fragment>
@@ -149,10 +155,10 @@ export default function CheckoutScreen() {
     if (loadingAddresses) {
       return (
         <View style={styles.stepContent}>
-          <Text style={styles.sectionTitle}>Shipping Address</Text>
-          <View style={styles.loadingBox}>
-            <ActivityIndicator color={COLORS.primary} />
-            <Text style={styles.loadingText}>Loading your addresses...</Text>
+          <Text style={[styles.sectionTitle, { color: C.text }]}>Shipping Address</Text>
+          <View style={[styles.loadingBox, { backgroundColor: C.skeletonBase }]}>
+            <ActivityIndicator color={C.primary} />
+            <Text style={[styles.loadingText, { color: C.textSecondary }]}>Loading your addresses...</Text>
           </View>
         </View>
       );
@@ -162,18 +168,18 @@ export default function CheckoutScreen() {
     if (!savedAddresses || savedAddresses.length === 0) {
       return (
         <View style={styles.stepContent}>
-          <Text style={styles.sectionTitle}>Shipping Address</Text>
-          <View style={styles.emptyAddressBox}>
-            <Text style={styles.emptyAddressIcon}>📍</Text>
-            <Text style={styles.emptyAddressTitle}>No saved addresses</Text>
-            <Text style={styles.emptyAddressSub}>
+          <Text style={[styles.sectionTitle, { color: C.text }]}>Shipping Address</Text>
+          <View style={[styles.emptyAddressBox, { backgroundColor: C.card, borderColor: C.border }]}>
+            <Text style={[styles.emptyAddressIcon, { color: C.textSecondary }]}>📍</Text>
+            <Text style={[styles.emptyAddressTitle, { color: C.text }]}>No saved addresses</Text>
+            <Text style={[styles.emptyAddressSub, { color: C.textSecondary }]}>
               Add a delivery address to continue
             </Text>
             <TouchableOpacity
-              style={styles.addAddressBtn}
+              style={[styles.addAddressBtn, { backgroundColor: C.primary }]}
               onPress={() => navigation.navigate('SavedAddresses')}
             >
-              <Text style={styles.addAddressBtnText}>
+              <Text style={[styles.addAddressBtnText, { color: C.textInverse }]}>
                 + ADD ADDRESS
               </Text>
             </TouchableOpacity>
@@ -186,11 +192,11 @@ export default function CheckoutScreen() {
     return (
       <View style={styles.stepContent}>
         <View style={styles.sectionTitleRow}>
-          <Text style={styles.sectionTitle}>Shipping Address</Text>
+          <Text style={[styles.sectionTitle, { color: C.text }]}>Shipping Address</Text>
           <TouchableOpacity
             onPress={() => navigation.navigate('SavedAddresses')}
           >
-            <Text style={styles.manageText}>+ NEW ADDRESS</Text>
+            <Text style={[styles.manageText, { color: C.accent }]}>+ NEW ADDRESS</Text>
           </TouchableOpacity>
         </View>
 
@@ -200,8 +206,8 @@ export default function CheckoutScreen() {
               key={address.id}
               style={[
                 styles.addressOption,
-                selectedAddress?.id === address.id &&
-                  styles.addressOptionActive,
+                { backgroundColor: C.card, borderColor: C.border },
+                selectedAddress?.id === address.id && { borderColor: C.primary },
               ]}
               onPress={() => setSelectedAddress(address)}
               activeOpacity={0.8}
@@ -209,34 +215,35 @@ export default function CheckoutScreen() {
               {/* Radio */}
               <View style={[
                 styles.radio,
-                selectedAddress?.id === address.id && styles.radioActive,
+                { borderColor: C.border },
+                selectedAddress?.id === address.id && { borderColor: C.primary },
               ]}>
                 {selectedAddress?.id === address.id && (
-                  <View style={styles.radioDot} />
+                  <View style={[styles.radioDot, { backgroundColor: C.primary }]} />
                 )}
               </View>
 
               {/* Address info */}
               <View style={styles.addressInfo}>
                 <View style={styles.addressLabelRow}>
-                  <Text style={styles.addressLabel}>
+                  <Text style={[styles.addressLabel, { color: C.textSecondary }]}>
                     {address.label === 'Home'   ? '🏠' :
                      address.label === 'Office' ? '🏢' : '📍'}
                     {'  '}
                     {address.label.toUpperCase()}
                   </Text>
                   {address.isDefault && (
-                    <View style={styles.defaultBadge}>
-                      <Text style={styles.defaultBadgeText}>DEFAULT</Text>
+                    <View style={[styles.defaultBadge, { backgroundColor: C.accent }]}>
+                      <Text style={[styles.defaultBadgeText, { color: C.textInverse }]}>DEFAULT</Text>
                     </View>
                   )}
                 </View>
-                <Text style={styles.addressName}>{address.fullName}</Text>
-                <Text style={styles.addressText}>{address.street}</Text>
-                <Text style={styles.addressText}>
+                <Text style={[styles.addressName, { color: C.text }]}>{address.fullName}</Text>
+                <Text style={[styles.addressText, { color: C.textSecondary }]}>{address.street}</Text>
+                <Text style={[styles.addressText, { color: C.textSecondary }]}>
                   {address.city}, {address.postalCode}
                 </Text>
-                <Text style={styles.addressPhone}>{address.phone}</Text>
+                <Text style={[styles.addressPhone, { color: C.textLight }]}>{address.phone}</Text>
               </View>
             </TouchableOpacity>
           ))}
@@ -245,6 +252,7 @@ export default function CheckoutScreen() {
         <TouchableOpacity
           style={[
             styles.nextBtn,
+            { backgroundColor: C.primary },
             !selectedAddress && styles.btnDisabled,
           ]}
           onPress={() => {
@@ -256,7 +264,7 @@ export default function CheckoutScreen() {
           }}
           disabled={!selectedAddress}
         >
-          <Text style={styles.nextBtnText}>
+          <Text style={[styles.nextBtnText, { color: C.textInverse }]}>
             CONTINUE TO DELIVERY →
           </Text>
         </TouchableOpacity>
@@ -267,14 +275,15 @@ export default function CheckoutScreen() {
   // ── Step 1: Delivery Method ────────────────────────────────
   const DeliveryStep = () => (
     <View style={styles.stepContent}>
-      <Text style={styles.sectionTitle}>Delivery Method</Text>
+      <Text style={[styles.sectionTitle, { color: C.text }]}>Delivery Method</Text>
 
       {DELIVERY_OPTIONS.map((opt) => (
         <TouchableOpacity
           key={opt.id}
           style={[
             styles.optionCard,
-            delivery.id === opt.id && styles.optionCardActive,
+            { backgroundColor: C.card, borderColor: C.border },
+            delivery.id === opt.id && { borderColor: C.primary },
           ]}
           onPress={() => setDelivery(opt)}
           activeOpacity={0.8}
@@ -282,18 +291,19 @@ export default function CheckoutScreen() {
           <View style={styles.optionLeft}>
             <View style={[
               styles.radio,
-              delivery.id === opt.id && styles.radioActive,
+              { borderColor: C.border },
+              delivery.id === opt.id && { borderColor: C.primary },
             ]}>
               {delivery.id === opt.id && (
-                <View style={styles.radioDot} />
+                <View style={[styles.radioDot, { backgroundColor: C.primary }]} />
               )}
             </View>
             <View>
-              <Text style={styles.optionTitle}>{opt.label}</Text>
-              <Text style={styles.optionDesc}>{opt.description}</Text>
+              <Text style={[styles.optionTitle, { color: C.text }]}>{opt.label}</Text>
+              <Text style={[styles.optionDesc, { color: C.textSecondary }]}>{opt.description}</Text>
             </View>
           </View>
-          <Text style={styles.optionPrice}>
+          <Text style={[styles.optionPrice, { color: C.text }]}>
             {opt.price === 0 ? 'Free' : `$${opt.price.toFixed(2)}`}
           </Text>
         </TouchableOpacity>
@@ -301,10 +311,10 @@ export default function CheckoutScreen() {
 
       {/* Selected address preview */}
       {selectedAddress && (
-        <View style={styles.addressPreview}>
-          <Text style={styles.previewLabel}>DELIVERING TO</Text>
-          <Text style={styles.previewName}>{selectedAddress.fullName}</Text>
-          <Text style={styles.previewText}>
+        <View style={[styles.addressPreview, { backgroundColor: C.skeletonBase, borderColor: C.border }]}>
+          <Text style={[styles.previewLabel, { color: C.textLight }]}>DELIVERING TO</Text>
+          <Text style={[styles.previewName, { color: C.text }]}>{selectedAddress.fullName}</Text>
+          <Text style={[styles.previewText, { color: C.textSecondary }]}>
             {selectedAddress.street}, {selectedAddress.city}
           </Text>
         </View>
@@ -312,16 +322,16 @@ export default function CheckoutScreen() {
 
       <View style={styles.btnRow}>
         <TouchableOpacity
-          style={styles.backBtn}
+          style={[styles.backBtn, { borderColor: C.border }]}
           onPress={() => setStep(0)}
         >
-          <Text style={styles.backBtnText}>← BACK</Text>
+          <Text style={[styles.backBtnText, { color: C.textSecondary }]}>← BACK</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.nextBtn}
+          style={[styles.nextBtn, { backgroundColor: C.primary }]}
           onPress={() => setStep(2)}
         >
-          <Text style={styles.nextBtnText}>CONTINUE →</Text>
+          <Text style={[styles.nextBtnText, { color: C.textInverse }]}>CONTINUE →</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -330,14 +340,15 @@ export default function CheckoutScreen() {
   // ── Step 2: Payment ────────────────────────────────────────
   const PaymentStep = () => (
     <View style={styles.stepContent}>
-      <Text style={styles.sectionTitle}>Payment Method</Text>
+      <Text style={[styles.sectionTitle, { color: C.text }]}>Payment Method</Text>
 
       {PAYMENT_OPTIONS.map((opt) => (
         <TouchableOpacity
           key={opt.id}
           style={[
             styles.optionCard,
-            payment === opt.id && styles.optionCardActive,
+            { backgroundColor: C.card, borderColor: C.border },
+            payment === opt.id && { borderColor: C.primary },
           ]}
           onPress={() => setPayment(opt.id)}
           activeOpacity={0.8}
@@ -345,13 +356,14 @@ export default function CheckoutScreen() {
           <View style={styles.optionLeft}>
             <View style={[
               styles.radio,
-              payment === opt.id && styles.radioActive,
+              { borderColor: C.border },
+              payment === opt.id && { borderColor: C.primary },
             ]}>
               {payment === opt.id && (
-                <View style={styles.radioDot} />
+                <View style={[styles.radioDot, { backgroundColor: C.primary }]} />
               )}
             </View>
-            <Text style={styles.optionTitle}>
+            <Text style={[styles.optionTitle, { color: C.text }]}>
               {opt.icon}{'  '}{opt.label}
             </Text>
           </View>
@@ -359,72 +371,65 @@ export default function CheckoutScreen() {
       ))}
 
       {/* Full order summary */}
-      <View style={styles.summaryBox}>
-        <Text style={styles.summaryTitle}>ORDER SUMMARY</Text>
+      <View style={[styles.summaryBox, { backgroundColor: C.card, borderColor: C.border }]}>
+        <Text style={[styles.summaryTitle, { color: C.textSecondary }]}>ORDER SUMMARY</Text>
 
         {/* Delivery address */}
         {selectedAddress && (
           <View style={styles.summaryAddressRow}>
-            <Text style={styles.summaryAddressLabel}>📍 Ship to</Text>
-            <Text style={styles.summaryAddressValue} numberOfLines={1}>
+            <Text style={[styles.summaryAddressLabel, { color: C.textSecondary }]}>📍 Ship to</Text>
+            <Text style={[styles.summaryAddressValue, { color: C.text }]} numberOfLines={1}>
               {selectedAddress.street}, {selectedAddress.city}
             </Text>
           </View>
         )}
 
-        <View style={styles.summaryDivider} />
+        <View style={[styles.summaryDivider, { backgroundColor: C.border }]} />
 
         {/* Items */}
         {items.map((item) => (
           <View key={item.product.id} style={styles.summaryRow}>
-            <Text style={styles.summaryItem} numberOfLines={1}>
+            <Text style={[styles.summaryItem, { color: C.textSecondary }]} numberOfLines={1}>
               {item.product.name} × {item.quantity}
             </Text>
-            <Text style={styles.summaryPrice}>
+            <Text style={[styles.summaryPrice, { color: C.text }]}>
               ${(item.product.price * item.quantity).toFixed(2)}
             </Text>
           </View>
         ))}
 
-        <View style={styles.summaryDivider} />
+        <View style={[styles.summaryDivider, { backgroundColor: C.border }]} />
 
         <View style={styles.summaryRow}>
-          <Text style={styles.summaryItem}>Delivery</Text>
-          <Text style={styles.summaryPrice}>
-            {delivery.price === 0
-              ? 'Free'
-              : `$${delivery.price.toFixed(2)}`}
-          </Text>
+          <Text style={[styles.summaryItem, { color: C.textSecondary, fontWeight: '700' }]}>Delivery</Text>
+          <Text style={[styles.summaryPrice, { color: C.text }]}>{delivery.price === 0 ? 'Free' : `$${delivery.price.toFixed(2)}`}</Text>
         </View>
         <View style={styles.summaryRow}>
-          <Text style={[styles.summaryItem, { fontWeight: '700' }]}>
-            Total
-          </Text>
-          <Text style={[styles.summaryPrice, styles.summaryTotal]}>
-            ${total.toFixed(2)}
-          </Text>
+          <Text style={[styles.summaryItem, { color: C.text, fontWeight: '700' }]}>Total</Text>
+          <Text style={[styles.summaryPrice, styles.summaryTotal, { color: C.text }]}>${total.toFixed(2)}</Text>
         </View>
       </View>
 
       <View style={styles.btnRow}>
         <TouchableOpacity
-          style={styles.backBtn}
+          style={[styles.backBtn, { borderColor: C.border }]}
           onPress={() => setStep(1)}
         >
-          <Text style={styles.backBtnText}>← BACK</Text>
+          <Text style={[styles.backBtnText, { color: C.textSecondary }]}>← BACK</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
             styles.placeOrderBtn,
+            { backgroundColor: C.accent },
             createOrder.isPending && styles.btnDisabled,
           ]}
           onPress={handlePlaceOrder}
           disabled={createOrder.isPending}
         >
           {createOrder.isPending ? (
-            <ActivityIndicator color={COLORS.white} />
+            <ActivityIndicator color={C.textInverse} />
           ) : (
-            <Text style={styles.placeOrderText}>PLACE ORDER</Text>
+            <Text style={[styles.placeOrderText, { color: C.textInverse }]}>PLACE ORDER</Text>
           )}
         </TouchableOpacity>
       </View>
@@ -432,13 +437,13 @@ export default function CheckoutScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: C.background }]}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: C.surface, borderBottomColor: C.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.headerBack}>←</Text>
+          <Text style={[styles.headerBack, { color: C.text }]}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>CHECKOUT</Text>
+        <Text style={[styles.headerTitle, { color: C.text }]}>CHECKOUT</Text>
         <View style={{ width: 40 }} />
       </View>
 
@@ -456,23 +461,20 @@ export default function CheckoutScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: COLORS.offWhite },
+  safe: { flex: 1 },
   header: {
     flexDirection:     'row',
     alignItems:        'center',
     justifyContent:    'space-between',
     paddingHorizontal: SPACING.md,
     paddingVertical:   SPACING.sm,
-    backgroundColor:   COLORS.white,
     borderBottomWidth: 0.5,
-    borderBottomColor: COLORS.border,
   },
-  headerBack:  { fontSize: 24, color: COLORS.textPrimary, width: 40 },
+  headerBack:  { fontSize: 24, width: 40 },
   headerTitle: {
     fontSize:      13,
     fontWeight:    '700',
     letterSpacing: 3,
-    color:         COLORS.textPrimary,
   },
   scrollContent: { paddingBottom: SPACING.xxl },
 
@@ -483,9 +485,7 @@ const styles = StyleSheet.create({
     justifyContent:    'center',
     paddingVertical:   SPACING.lg,
     paddingHorizontal: SPACING.md,
-    backgroundColor:   COLORS.white,
     borderBottomWidth: 0.5,
-    borderBottomColor: COLORS.border,
   },
   stepItem:   { alignItems: 'center', gap: 6 },
   stepCircle: {
@@ -493,33 +493,24 @@ const styles = StyleSheet.create({
     height:          32,
     borderRadius:    16,
     borderWidth:     1.5,
-    borderColor:     COLORS.border,
     alignItems:      'center',
     justifyContent:  'center',
-    backgroundColor: COLORS.white,
   },
-  stepCircleActive: { borderColor:     COLORS.primary },
-  stepCircleDone:   { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
-  stepNumber:       { fontSize: 13, fontWeight: '600', color: COLORS.textLight },
-  stepNumberActive: { color: COLORS.primary },
-  stepCheckmark:    { fontSize: 14, color: COLORS.white, fontWeight: '700' },
-  stepLabel:        { fontSize: 10, color: COLORS.textLight, letterSpacing: 1 },
-  stepLabelActive:  { color: COLORS.textPrimary, fontWeight: '700' },
+  stepNumber:       { fontSize: 13, fontWeight: '600' },
+  stepCheckmark:    { fontSize: 14, fontWeight: '700' },
+  stepLabel:        { fontSize: 10, letterSpacing: 1 },
   stepLine:         {
     flex:            1,
     height:          1,
-    backgroundColor: COLORS.border,
     marginHorizontal: 8,
     marginBottom:    20,
   },
-  stepLineDone: { backgroundColor: COLORS.primary },
 
   // Shared step content
   stepContent: { padding: SPACING.md, gap: SPACING.md },
   sectionTitle: {
     fontSize:   18,
     fontWeight: '700',
-    color:      COLORS.textPrimary,
   },
   sectionTitleRow: {
     flexDirection:  'row',
@@ -530,7 +521,6 @@ const styles = StyleSheet.create({
     fontSize:      11,
     letterSpacing: 1,
     fontWeight:    '700',
-    color:         COLORS.accent,
   },
 
   // Loading
@@ -540,41 +530,34 @@ const styles = StyleSheet.create({
     justifyContent:  'center',
     gap:             SPACING.sm,
     padding:         SPACING.xl,
-    backgroundColor: COLORS.offWhite,
     borderRadius:    RADIUS.md,
   },
-  loadingText: { color: COLORS.textSecondary, fontSize: 14 },
+  loadingText: { fontSize: 14 },
 
   // Empty address
   emptyAddressBox: {
     alignItems:      'center',
     padding:         SPACING.xl,
-    backgroundColor: COLORS.white,
     borderRadius:    RADIUS.md,
     borderWidth:     1,
-    borderColor:     COLORS.border,
     gap:             SPACING.sm,
   },
   emptyAddressIcon:  { fontSize: 40 },
   emptyAddressTitle: {
     fontSize:   16,
     fontWeight: '700',
-    color:      COLORS.textPrimary,
   },
   emptyAddressSub: {
     fontSize:  13,
-    color:     COLORS.textSecondary,
     textAlign: 'center',
   },
   addAddressBtn: {
     marginTop:         SPACING.sm,
-    backgroundColor:   COLORS.primary,
     paddingVertical:   12,
     paddingHorizontal: SPACING.lg,
     borderRadius:      RADIUS.md,
   },
   addAddressBtnText: {
-    color:         COLORS.white,
     fontWeight:    '700',
     fontSize:      12,
     letterSpacing: 2,
@@ -587,31 +570,22 @@ const styles = StyleSheet.create({
     alignItems:      'flex-start',
     gap:             SPACING.sm,
     padding:         SPACING.md,
-    backgroundColor: COLORS.white,
     borderRadius:    RADIUS.md,
     borderWidth:     1.5,
-    borderColor:     COLORS.border,
-  },
-  addressOptionActive: {
-    borderColor:     COLORS.primary,
-    backgroundColor: '#FAFFFE',
   },
   radio: {
     width:           22,
     height:          22,
     borderRadius:    11,
     borderWidth:     1.5,
-    borderColor:     COLORS.border,
     alignItems:      'center',
     justifyContent:  'center',
     marginTop:       2,
   },
-  radioActive: { borderColor: COLORS.primary },
   radioDot: {
     width:           11,
     height:          11,
     borderRadius:    6,
-    backgroundColor: COLORS.primary,
   },
   addressInfo:     { flex: 1, gap: 3 },
   addressLabelRow: {
@@ -624,10 +598,8 @@ const styles = StyleSheet.create({
     fontSize:      11,
     letterSpacing: 1.5,
     fontWeight:    '700',
-    color:         COLORS.textSecondary,
   },
   defaultBadge: {
-    backgroundColor:  COLORS.accent,
     paddingHorizontal: 6,
     paddingVertical:   2,
     borderRadius:     RADIUS.full,
@@ -635,38 +607,32 @@ const styles = StyleSheet.create({
   defaultBadgeText: {
     fontSize:      9,
     fontWeight:    '700',
-    color:         COLORS.white,
     letterSpacing: 1,
   },
   addressName: {
     fontSize:   15,
     fontWeight: '600',
-    color:      COLORS.textPrimary,
   },
-  addressText:  { fontSize: 13, color: COLORS.textSecondary, lineHeight: 20 },
-  addressPhone: { fontSize: 12, color: COLORS.textLight, marginTop: 2 },
+  addressText:  { fontSize: 13, lineHeight: 20 },
+  addressPhone: { fontSize: 12, marginTop: 2 },
 
   // Delivery preview
   addressPreview: {
-    backgroundColor: COLORS.offWhite,
     padding:         SPACING.md,
     borderRadius:    RADIUS.md,
     gap:             4,
     borderWidth:     0.5,
-    borderColor:     COLORS.border,
   },
   previewLabel: {
     fontSize:      10,
     letterSpacing: 2,
     fontWeight:    '700',
-    color:         COLORS.textLight,
   },
   previewName: {
     fontSize:   14,
     fontWeight: '600',
-    color:      COLORS.textPrimary,
   },
-  previewText: { fontSize: 13, color: COLORS.textSecondary },
+  previewText: { fontSize: 13 },
 
   // Option cards (delivery + payment)
   optionCard: {
@@ -674,35 +640,29 @@ const styles = StyleSheet.create({
     alignItems:      'center',
     justifyContent:  'space-between',
     padding:         SPACING.md,
-    backgroundColor: COLORS.white,
     borderRadius:    RADIUS.md,
     borderWidth:     1.5,
-    borderColor:     COLORS.border,
   },
-  optionCardActive: { borderColor: COLORS.primary },
   optionLeft: {
     flexDirection: 'row',
     alignItems:    'center',
     gap:           SPACING.sm,
   },
-  optionTitle: { fontSize: 15, fontWeight: '600', color: COLORS.textPrimary },
-  optionDesc:  { fontSize: 12, color: COLORS.textSecondary, marginTop: 2 },
-  optionPrice: { fontSize: 15, fontWeight: '600', color: COLORS.textPrimary },
+  optionTitle: { fontSize: 15, fontWeight: '600' },
+  optionDesc:  { fontSize: 12, marginTop: 2 },
+  optionPrice: { fontSize: 15, fontWeight: '600' },
 
   // Order summary
   summaryBox: {
-    backgroundColor: COLORS.white,
     borderRadius:    RADIUS.md,
     padding:         SPACING.md,
     gap:             SPACING.sm,
     borderWidth:     0.5,
-    borderColor:     COLORS.border,
   },
   summaryTitle: {
     fontSize:      11,
     letterSpacing: 2,
     fontWeight:    '700',
-    color:         COLORS.textSecondary,
     marginBottom:  SPACING.xs,
   },
   summaryAddressRow: {
@@ -712,18 +672,15 @@ const styles = StyleSheet.create({
   },
   summaryAddressLabel: {
     fontSize:  13,
-    color:     COLORS.textSecondary,
-    minWidth:  60,
+    minWidth: 60,
   },
   summaryAddressValue: {
     flex:       1,
     fontSize:   13,
-    color:      COLORS.textPrimary,
     fontWeight: '500',
   },
   summaryDivider: {
     height:          0.5,
-    backgroundColor: COLORS.border,
     marginVertical:  SPACING.xs,
   },
   summaryRow: {
@@ -733,11 +690,10 @@ const styles = StyleSheet.create({
   },
   summaryItem:  {
     fontSize: 14,
-    color:    COLORS.textSecondary,
     flex:     1,
     marginRight: SPACING.sm,
   },
-  summaryPrice: { fontSize: 14, color: COLORS.textPrimary, fontWeight: '500' },
+  summaryPrice: { fontSize: 14, fontWeight: '500' },
   summaryTotal: { fontSize: 18, fontWeight: '700' },
 
   // Buttons
@@ -751,7 +707,6 @@ const styles = StyleSheet.create({
     height:         52,
     borderRadius:   RADIUS.md,
     borderWidth:    1.5,
-    borderColor:    COLORS.border,
     alignItems:     'center',
     justifyContent: 'center',
   },
@@ -759,13 +714,11 @@ const styles = StyleSheet.create({
     fontSize:      12,
     fontWeight:    '700',
     letterSpacing: 2,
-    color:         COLORS.textSecondary,
   },
   nextBtn: {
     flex:           2,
     height:         52,
     borderRadius:   RADIUS.md,
-    backgroundColor: COLORS.primary,
     alignItems:     'center',
     justifyContent: 'center',
   },
@@ -773,13 +726,11 @@ const styles = StyleSheet.create({
     fontSize:      12,
     fontWeight:    '700',
     letterSpacing: 2,
-    color:         COLORS.white,
   },
   placeOrderBtn: {
     flex:           2,
     height:         52,
     borderRadius:   RADIUS.md,
-    backgroundColor: COLORS.accent,
     alignItems:     'center',
     justifyContent: 'center',
   },
@@ -787,7 +738,6 @@ const styles = StyleSheet.create({
     fontSize:      13,
     fontWeight:    '700',
     letterSpacing: 2,
-    color:         COLORS.white,
   },
   btnDisabled: { opacity: 0.6 },
 });

@@ -7,6 +7,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { COLORS, SPACING } from '../../utils/constants';
+import { useTheme } from '../../hook/useTheme';
 
 interface SectionHeaderProps {
   title: string;
@@ -23,18 +24,19 @@ export default function SectionHeader({
   onPrev,
   onNext,
 }: SectionHeaderProps) {
+  const { colors: C } = useTheme();
   return (
-    <View style={styles.row}>
-      <Text style={styles.title}>{title}</Text>
+    <View style={[styles.row, { backgroundColor: C.background }]}>
+      <Text style={[styles.title, { color: C.text }]}>{title}</Text>
 
-      <View style={styles.right}>
+      <View style={[styles.right, { backgroundColor: C.background }]}>
         {showArrows && (
           <>
-            <TouchableOpacity style={styles.arrowBtn} onPress={onPrev}>
-              <Text style={styles.arrow}>‹</Text>
+            <TouchableOpacity style={[styles.arrowBtn, { backgroundColor: C.background }]} onPress={onPrev}>
+              <Text style={[styles.arrow,{color:C.text}]}>‹</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.arrowBtn} onPress={onNext}>
-              <Text style={styles.arrow}>›</Text>
+            <TouchableOpacity style={[styles.arrowBtn, { backgroundColor: C.background }]} onPress={onNext}>
+              <Text style={[styles.arrow,{color:C.text}]}>›</Text>
             </TouchableOpacity>
           </>
         )}

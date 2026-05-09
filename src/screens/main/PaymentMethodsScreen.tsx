@@ -20,11 +20,13 @@ import {
 import CardItem      from '../../../components/payment/CardItem';
 import CardFormModal from '../../../components/payment/CardFormModal';
 import VisualCard    from '../../../components/payment/VisualCard';
-import { COLORS, SPACING, RADIUS } from '../../../utils/constants';
+import { SPACING, RADIUS } from '../../../utils/constants';
+import { useTheme } from '../../../hook/useTheme';
 import type { PaymentCard } from '../../../types';
 
 export default function PaymentMethodsScreen() {
   const navigation = useNavigation<any>();
+  const { colors: C } = useTheme();
 
   const { data: cards, isLoading } = useCards();
   const addCard    = useAddCard();
@@ -49,24 +51,24 @@ export default function PaymentMethodsScreen() {
   const defaultCard = cards?.find((c) => c.isDefault) ?? cards?.[0];
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: C.background }]}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: C.surface, borderBottomColor: C.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backText}>←</Text>
+          <Text style={[styles.backText, { color: C.text }]}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>PAYMENT METHODS</Text>
+        <Text style={[styles.headerTitle, { color: C.text }]}>PAYMENT METHODS</Text>
         <TouchableOpacity
-          style={styles.addBtn}
+          style={[styles.addBtn, { backgroundColor: C.primary }]}
           onPress={() => setModalVisible(true)}
         >
-          <Text style={styles.addBtnText}>+ ADD</Text>
+          <Text style={[styles.addBtnText, { color: C.textInverse }]}>+ ADD</Text>
         </TouchableOpacity>
       </View>
 
       {isLoading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={COLORS.primary} />
+          <ActivityIndicator size="large" color={C.primary} />
         </View>
       ) : (
         <FlatList
@@ -82,29 +84,29 @@ export default function PaymentMethodsScreen() {
               {/* Hero default card */}
               {defaultCard && (
                 <View style={styles.heroSection}>
-                  <Text style={styles.heroLabel}>DEFAULT CARD</Text>
+                  <Text style={[styles.heroLabel, { color: C.textSecondary }]}>DEFAULT CARD</Text>
                   <VisualCard card={defaultCard} />
                 </View>
               )}
 
               {/* Cards list header */}
               {cards && cards.length > 0 && (
-                <Text style={styles.listTitle}>ALL CARDS</Text>
+                <Text style={[styles.listTitle, { color: C.textSecondary }]}>ALL CARDS</Text>
               )}
             </View>
           }
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Text style={styles.emptyIcon}>💳</Text>
-              <Text style={styles.emptyTitle}>No payment methods</Text>
-              <Text style={styles.emptySubtitle}>
+              <Text style={[styles.emptyIcon, { color: C.textLight }]}>💳</Text>
+              <Text style={[styles.emptyTitle, { color: C.text }]}>No payment methods</Text>
+              <Text style={[styles.emptySubtitle, { color: C.textSecondary }]}>
                 Add a card for faster checkout
               </Text>
               <TouchableOpacity
-                style={styles.emptyBtn}
+                style={[styles.emptyBtn, { backgroundColor: C.primary }]}
                 onPress={() => setModalVisible(true)}
               >
-                <Text style={styles.emptyBtnText}>
+                <Text style={[styles.emptyBtnText, { color: C.textInverse }]}>
                   + ADD YOUR FIRST CARD
                 </Text>
               </TouchableOpacity>
@@ -120,11 +122,11 @@ export default function PaymentMethodsScreen() {
           ListFooterComponent={
             cards && cards.length > 0 ? (
               <TouchableOpacity
-                style={styles.addNewBtn}
+                style={[styles.addNewBtn, { backgroundColor: C.card, borderColor: C.border }]}
                 onPress={() => setModalVisible(true)}
               >
-                <Text style={styles.addNewIcon}>+</Text>
-                <Text style={styles.addNewText}>Add New Card</Text>
+                <Text style={[styles.addNewIcon, { color: C.textSecondary }]}>+</Text>
+                <Text style={[styles.addNewText, { color: C.textSecondary }]}>Add New Card</Text>
               </TouchableOpacity>
             ) : null
           }
@@ -143,34 +145,29 @@ export default function PaymentMethodsScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: COLORS.offWhite },
+  safe: { flex: 1 },
   header: {
     flexDirection:     'row',
     alignItems:        'center',
     justifyContent:    'space-between',
     paddingHorizontal: SPACING.md,
     paddingVertical:   SPACING.sm,
-    backgroundColor:   COLORS.white,
     borderBottomWidth: 0.5,
-    borderBottomColor: COLORS.border,
   },
-  backText:    { fontSize: 24, color: COLORS.textPrimary, width: 40 },
+  backText:    { fontSize: 24, width: 40 },
   headerTitle: {
     fontSize:      12,
     fontWeight:    '700',
     letterSpacing: 3,
-    color:         COLORS.textPrimary,
   },
   addBtn: {
     paddingHorizontal: SPACING.sm,
     paddingVertical:   6,
-    backgroundColor:   COLORS.primary,
     borderRadius:      RADIUS.full,
   },
   addBtnText: {
     fontSize:      11,
     fontWeight:    '700',
-    color:         COLORS.white,
     letterSpacing: 1,
   },
   loadingContainer: {
@@ -191,14 +188,12 @@ const styles = StyleSheet.create({
     fontSize:      10,
     letterSpacing: 3,
     fontWeight:    '700',
-    color:         COLORS.textSecondary,
     alignSelf:     'flex-start',
   },
   listTitle: {
     fontSize:      10,
     letterSpacing: 3,
     fontWeight:    '700',
-    color:         COLORS.textSecondary,
     marginBottom:  SPACING.sm,
   },
   emptyContainer: {
@@ -212,22 +207,18 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize:   20,
     fontWeight: '700',
-    color:      COLORS.textPrimary,
   },
   emptySubtitle: {
     fontSize:  14,
-    color:     COLORS.textSecondary,
     textAlign: 'center',
   },
   emptyBtn: {
     marginTop:         SPACING.lg,
-    backgroundColor:   COLORS.primary,
     paddingVertical:   14,
     paddingHorizontal: SPACING.xl,
     borderRadius:      RADIUS.md,
   },
   emptyBtnText: {
-    color:         COLORS.white,
     fontWeight:    '700',
     fontSize:      12,
     letterSpacing: 2,
@@ -240,15 +231,12 @@ const styles = StyleSheet.create({
     marginTop:       SPACING.md,
     paddingVertical: SPACING.md,
     borderWidth:     1.5,
-    borderColor:     COLORS.border,
     borderRadius:    RADIUS.md,
     borderStyle:     'dashed',
-    backgroundColor: COLORS.white,
   },
-  addNewIcon: { fontSize: 20, color: COLORS.textSecondary },
+  addNewIcon: { fontSize: 20 },
   addNewText: {
     fontSize:   15,
     fontWeight: '600',
-    color:      COLORS.textSecondary,
   },
 });

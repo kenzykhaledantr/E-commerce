@@ -22,6 +22,7 @@ import AddressCard     from '../../../components/address/AddressCard';
 import AddressFormModal from '../../../components/address/AddressFormModal';
 import { COLORS, SPACING, RADIUS } from '../../../utils/constants';
 import type { Address } from '../../../types';
+import { useTheme } from '../../../hook/useTheme';
 
 export default function SavedAddressesScreen() {
   const navigation = useNavigation<any>();
@@ -34,6 +35,7 @@ export default function SavedAddressesScreen() {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
+  const { colors: C } = useTheme();
 
   // ── Open modal for new address ─────────────────────────────
   const handleAddNew = () => {
@@ -76,21 +78,21 @@ const handleSave = async (formData: Omit<Address, 'id'>) => {
     addAddress.isPending || updateAddress.isPending;
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: C.background }]}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: C.surface }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backBtn}
         >
-          <Text style={styles.backText}>←</Text>
+          <Text style={[styles.backText, { color: C.text }]}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>SAVED ADDRESSES</Text>
+        <Text style={[styles.headerTitle, { color: C.text }]}>SAVED ADDRESSES</Text>
         <TouchableOpacity
-          style={styles.addBtn}
+          style={[styles.addBtn, { backgroundColor: C.primary }]}
           onPress={handleAddNew}
         >
-          <Text style={styles.addBtnText}>+ ADD</Text>
+          <Text style={[styles.addBtnText, { color: C.background }]}>+ ADD</Text>
         </TouchableOpacity>
       </View>
 

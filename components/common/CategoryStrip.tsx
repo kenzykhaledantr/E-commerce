@@ -11,6 +11,7 @@ import {
 import { COLORS, SPACING, RADIUS } from '../../utils/constants';
 import type { ProductCategory } from '../../types';
 import * as Haptics from 'expo-haptics';
+import { useTheme } from '../../hook/useTheme';
 
 interface Category {
   key: ProductCategory | 'all';
@@ -37,10 +38,11 @@ export default function CategoryStrip({
   onSelect,
   selected = 'all',
 }: CategoryStripProps) {
+  const { colors: C } = useTheme();
   return (
-    <View style={styles.wrapper}>
-      <View style={styles.titleRow}>
-        <Text style={styles.title}>Shop by Category</Text>
+    <View style={[styles.wrapper,{ backgroundColor: C.background, borderBottomColor: C.border }]}>
+      <View style={[styles.titleRow, { backgroundColor: C.background }]}>
+        <Text style={[styles.title, { color: C.text }]}>Shop by Category</Text>
         <TouchableOpacity>
           <Text style={styles.viewAll}>VIEW ALL</Text>
         </TouchableOpacity>

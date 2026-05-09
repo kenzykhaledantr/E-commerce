@@ -13,11 +13,12 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { AuthScreenProps } from '../../../types/navigation';
-import { COLORS, SPACING, RADIUS } from '../../../utils/constants';
+import { SPACING, RADIUS } from '../../../utils/constants';
 import { loginUser } from '../../../services/authService';
 import { useAuthStore } from '../../../store/authStore';
 import FormInput from '../../../components/common/FormInput';
 import { validators, validateForm } from '../../../utils/validation';
+import { useTheme } from '../../../hook/useTheme';
 
 export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
   const [email,    setEmail]    = useState('');
@@ -25,6 +26,7 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
   const [errors,   setErrors]   = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
   const { setUser } = useAuthStore();
+  const { colors: C } = useTheme();
 
   const handleLogin = async () => {
     // Clear previous errors
@@ -59,7 +61,7 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
   };
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: C.background }]}>
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -70,9 +72,9 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.header}>
-            <Text style={styles.brand}>ELITE RETAIL</Text>
-            <Text style={styles.title}>Welcome back</Text>
-            <Text style={styles.subtitle}>Sign in to your account</Text>
+            <Text style={[styles.brand, { color: C.accent }]}>ELITE RETAIL</Text>
+            <Text style={[styles.title, { color: C.text }]}>Welcome back</Text>
+            <Text style={[styles.subtitle, { color: C.textSecondary }]}>Sign in to your account</Text>
           </View>
 
           <View style={styles.form}>
@@ -103,6 +105,7 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
             <TouchableOpacity
               style={[
                 styles.button,
+                { backgroundColor: C.primary },
                 isLoading && styles.buttonDisabled,
               ]}
               onPress={handleLogin}
@@ -110,20 +113,20 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
               activeOpacity={0.85}
             >
               {isLoading ? (
-                <ActivityIndicator color={COLORS.white} />
+                <ActivityIndicator color={C.textInverse} />
               ) : (
-                <Text style={styles.buttonText}>SIGN IN</Text>
+                <Text style={[styles.buttonText, { color: C.textInverse }]}>SIGN IN</Text>
               )}
             </TouchableOpacity>
 
             <View style={styles.footer}>
-              <Text style={styles.footerText}>
+              <Text style={[styles.footerText, { color: C.textSecondary }]}>
                 Don't have an account?{' '}
               </Text>
               <TouchableOpacity
                 onPress={() => navigation.navigate('Register')}
               >
-                <Text style={styles.footerLink}>CREATE ACCOUNT</Text>
+                <Text style={[styles.footerLink, { color: C.text }]}>CREATE ACCOUNT</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -134,27 +137,24 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: COLORS.white },
+  safe: { flex: 1 },
   flex: { flex: 1 },
   container: { flexGrow: 1, padding: SPACING.lg },
   header: { paddingTop: SPACING.xl, paddingBottom: SPACING.xl },
   brand: {
     fontSize: 12,
     letterSpacing: 4,
-    color: COLORS.accent,
     fontWeight: '600',
     marginBottom: SPACING.lg,
   },
   title: {
     fontSize: 32,
     fontWeight: '700',
-    color: COLORS.textPrimary,
     marginBottom: SPACING.xs,
   },
-  subtitle: { fontSize: 16, color: COLORS.textSecondary },
+  subtitle: { fontSize: 16 },
   form: { gap: SPACING.md },
   button: {
-    backgroundColor: COLORS.primary,
     height: 54,
     borderRadius: RADIUS.md,
     alignItems: 'center',
@@ -163,7 +163,6 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: { opacity: 0.6 },
   buttonText: {
-    color: COLORS.white,
     fontWeight: '700',
     fontSize: 14,
     letterSpacing: 2,
@@ -173,9 +172,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: SPACING.md,
   },
-  footerText: { color: COLORS.textSecondary, fontSize: 14 },
+  footerText: { fontSize: 14 },
   footerLink: {
-    color: COLORS.textPrimary,
     fontWeight: '700',
     fontSize: 14,
     letterSpacing: 1,

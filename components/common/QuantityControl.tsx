@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Text, StyleSheet, TouchableOpacity, View } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { COLORS, RADIUS } from '../../utils/constants';
-
+import { useTheme } from '../../hook/useTheme';
 interface QuantityButtonProps {
   label: string;
   onPress: () => void;
@@ -16,14 +16,16 @@ function QuantityButton({ label, onPress, disabled }: QuantityButtonProps) {
     onPress();
   };
 
+  const { colors: C } = useTheme();
+
   return (
     <TouchableOpacity
-      style={[styles.btn, disabled && styles.btnDisabled]}
+      style={[styles.btn, disabled && styles.btnDisabled, { backgroundColor: C.surface, borderColor: C.text }]}
       onPress={handlePress}
       disabled={disabled}
       activeOpacity={0.7}
     >
-      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.label,{color:C.text}]}>{label}</Text>
     </TouchableOpacity>
   );
 }
@@ -43,14 +45,15 @@ export default function QuantityControl({
   min = 1,
   max = 99,
 }: QuantityControlProps) {
+  const { colors: C } = useTheme();
   return (
-    <View style={styles.row}>
+    <View style={[styles.row, { backgroundColor: C.background }]}>
       <QuantityButton
         label="−"
         onPress={onDecrement}
         disabled={value <= min}
       />
-      <Text style={styles.value}>{value}</Text>
+      <Text style={[styles.value, { color: C.text }]}>{value}</Text>
       <QuantityButton
         label="+"
         onPress={onIncrement}

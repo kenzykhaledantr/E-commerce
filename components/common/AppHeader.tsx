@@ -9,11 +9,13 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { useCartStore } from '../../store/cartStore';
 import { COLORS, SPACING } from '../../utils/constants';
+import { useTheme } from '../../hook/useTheme';
 
 export default function AppHeader({ showSearch = true }: { showSearch?: boolean }) {
   const navigation = useNavigation<any>();
   const totalItems = useCartStore((s) => s.totalItems());
   const badgeScale = useRef(new Animated.Value(1)).current;
+    const { colors: C } = useTheme();
 
   useEffect(() => {
     if (totalItems > 0) {
@@ -35,19 +37,22 @@ export default function AppHeader({ showSearch = true }: { showSearch?: boolean 
   }, [totalItems]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {
+      backgroundColor:  C.surface,
+      borderBottomColor: C.border,
+    }]}>
       <TouchableOpacity style={styles.iconBtn} activeOpacity={0.7}>
-        <View style={styles.menuLine} />
-        <View style={[styles.menuLine, { width: 16 }]} />
-        <View style={styles.menuLine} />
+        <View style={[styles.menuLine, { backgroundColor: C.text }]} />
+        <View style={[styles.menuLine, { backgroundColor: C.text, width: 16 }]} />
+        <View style={[styles.menuLine, { backgroundColor: C.text }]} />
       </TouchableOpacity>
 
-      <Text style={styles.brand}>ELITE RETAIL</Text>
+      <Text style={[styles.brand, { color: C.text }]}>ELITE RETAIL</Text>
 
       <View style={styles.rightRow}>
         {showSearch && (
           <TouchableOpacity style={styles.iconBtn} activeOpacity={0.7}>
-            <Text style={styles.iconText}>⌕</Text>
+            <Text style={[styles.iconText, { color: C.text }]}>⌕</Text>
           </TouchableOpacity>
         )}
         <TouchableOpacity
@@ -55,10 +60,10 @@ export default function AppHeader({ showSearch = true }: { showSearch?: boolean 
           activeOpacity={0.7}
           onPress={() => navigation.navigate('Cart')}
         >
-          <Text style={styles.iconText}>🛍</Text>
+          <Text style={[styles.iconText, { color: C.text }]}>🛍</Text>
           {totalItems > 0 && (
             <Animated.View
-              style={[styles.badge, { transform: [{ scale: badgeScale }] }]}
+              style={[styles.badge, { backgroundColor: C.error, transform: [{ scale: badgeScale }] }]}
             >
               <Text style={styles.badgeText}>
                 {totalItems > 9 ? '9+' : totalItems}
@@ -78,15 +83,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
-    backgroundColor: COLORS.white,
     borderBottomWidth: 0.5,
-    borderBottomColor: COLORS.border,
   },
   brand: {
     fontSize: 13,
     fontWeight: '700',
     letterSpacing: 4,
-    color: COLORS.textPrimary,
   },
   rightRow: { flexDirection: 'row', alignItems: 'center', gap: SPACING.xs },
   iconBtn: {
@@ -96,11 +98,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     position: 'relative',
   },
-  iconText: { fontSize: 20, color: COLORS.textPrimary },
+  iconText: { fontSize: 20 },
   menuLine: {
     width: 20,
     height: 1.5,
-    backgroundColor: COLORS.textPrimary,
     marginVertical: 2.5,
     borderRadius: 2,
   },
@@ -108,7 +109,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 6,
     right: 4,
-    backgroundColor: COLORS.error,
     borderRadius: 999,
     minWidth: 16,
     height: 16,
@@ -116,5 +116,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 3,
   },
-  badgeText: { color: COLORS.white, fontSize: 9, fontWeight: '700' },
+  badgeText: { color: '#FFFFFF', fontSize: 9, fontWeight: '700' },
 });

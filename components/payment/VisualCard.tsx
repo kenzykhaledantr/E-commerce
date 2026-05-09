@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import type { PaymentCard } from '../../types';
 import { SPACING, RADIUS } from '../../utils/constants';
+import { useTheme } from '../../hook/useTheme';
 
 const { width } = Dimensions.get('window');
 const CARD_W    = width - SPACING.md * 2;
@@ -26,40 +27,41 @@ const CARD_LOGOS: Record<PaymentCard['cardType'], string> = {
 };
 
 export default function VisualCard({ card, style }: VisualCardProps) {
+  const { colors: C } = useTheme();
   return (
     <View style={[styles.card, { backgroundColor: card.color }, style]}>
       {/* Decorative circles */}
-      <View style={styles.circle1} />
-      <View style={styles.circle2} />
+      <View style={[styles.circle1, { backgroundColor: 'rgba(255,255,255,0.06)' }]} />
+      <View style={[styles.circle2, { backgroundColor: 'rgba(255,255,255,0.04)' }]} />
 
       {/* Top row */}
       <View style={styles.topRow}>
         <View style={styles.chip}>
-          <View style={styles.chipLine} />
-          <View style={styles.chipLine} />
-          <View style={styles.chipLine} />
+          <View style={[styles.chipLine, { backgroundColor: 'rgba(0,0,0,0.2)' }]} />
+          <View style={[styles.chipLine, { backgroundColor: 'rgba(0,0,0,0.2)' }]} />
+          <View style={[styles.chipLine, { backgroundColor: 'rgba(0,0,0,0.2)' }]} />
         </View>
-        <Text style={styles.cardTypeBadge}>
+        <Text style={[styles.cardTypeBadge, { color: 'rgba(255,255,255,0.9)' }]}>
           {CARD_LOGOS[card.cardType]}
         </Text>
       </View>
 
       {/* Card number */}
-      <Text style={styles.cardNumber}>
+      <Text style={[styles.cardNumber, { color: 'rgba(255,255,255,0.9)' }]}>
         ••••  ••••  ••••  {card.lastFour}
       </Text>
 
       {/* Bottom row */}
       <View style={styles.bottomRow}>
         <View>
-          <Text style={styles.fieldLabel}>CARD HOLDER</Text>
-          <Text style={styles.fieldValue} numberOfLines={1}>
+          <Text style={[styles.fieldLabel, { color: 'rgba(255,255,255,0.55)' }]}>CARD HOLDER</Text>
+          <Text style={[styles.fieldValue, { color: 'rgba(255,255,255,0.9)' }]} numberOfLines={1}>
             {card.cardHolder.toUpperCase()}
           </Text>
         </View>
         <View style={styles.expiryBlock}>
-          <Text style={styles.fieldLabel}>EXPIRES</Text>
-          <Text style={styles.fieldValue}>{card.expiry}</Text>
+          <Text style={[styles.fieldLabel, { color: 'rgba(255,255,255,0.55)' }]}>EXPIRES</Text>
+          <Text style={[styles.fieldValue, { color: 'rgba(255,255,255,0.9)' }]}>{card.expiry}</Text>
         </View>
       </View>
     </View>
@@ -88,7 +90,6 @@ const styles = StyleSheet.create({
     width:           CARD_H * 0.9,
     height:          CARD_H * 0.9,
     borderRadius:    CARD_H * 0.45,
-    backgroundColor: 'rgba(255,255,255,0.06)',
   },
   circle2: {
     position:        'absolute',
@@ -97,7 +98,6 @@ const styles = StyleSheet.create({
     width:           CARD_H * 0.7,
     height:          CARD_H * 0.7,
     borderRadius:    CARD_H * 0.35,
-    backgroundColor: 'rgba(255,255,255,0.04)',
   },
   topRow: {
     flexDirection:  'row',
@@ -115,18 +115,15 @@ const styles = StyleSheet.create({
   },
   chipLine: {
     height:          2,
-    backgroundColor: 'rgba(0,0,0,0.2)',
     borderRadius:    1,
   },
   cardTypeBadge: {
     fontSize:   18,
     fontWeight: '900',
-    color:      'rgba(255,255,255,0.9)',
     letterSpacing: 1,
   },
   cardNumber: {
     fontSize:      20,
-    color:         'rgba(255,255,255,0.9)',
     letterSpacing: 3,
     fontWeight:    '500',
     textAlign:     'center',
@@ -138,14 +135,12 @@ const styles = StyleSheet.create({
   },
   fieldLabel: {
     fontSize:      9,
-    color:         'rgba(255,255,255,0.55)',
     letterSpacing: 2,
     fontWeight:    '600',
-    marginBottom:  3,
+    marginBottom: 3,
   },
   fieldValue: {
     fontSize:   14,
-    color:      'rgba(255,255,255,0.9)',
     fontWeight: '600',
     letterSpacing: 1,
     maxWidth:   160,

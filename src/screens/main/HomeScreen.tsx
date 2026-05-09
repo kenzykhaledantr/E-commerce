@@ -19,10 +19,10 @@ import CategoryStrip from '../../../components/common/CategoryStrip';
 import SectionHeader from '../../../components/common/SectionHeader';
 import ProductCard, { CARD_WIDTH } from '../../../components/product/ProductCard';
 import SkeletonCard from '../../../components/common/SkeletonCard';
-
+import { useTheme } from '../../../hook/useTheme';
 import { useProducts, useNewArrivals, useProductsByCategory } from '../../../api/useProducts';
 import { useFavoritesStore } from '../../../store/favoritesStore';
-import { COLORS, SPACING } from '../../../utils/constants';
+import { SPACING } from '../../../utils/constants';
 import type { Product, ProductCategory } from '../../../types';
 
 import {
@@ -37,7 +37,7 @@ export default function HomeScreen() {
   const [selectedCategory, setSelectedCategory] = useState<ProductCategory | 'all'>('all');
   const [refreshing, setRefreshing] = useState(false);
   const newArrivalsRef = useRef<FlatList>(null);
-
+  const { colors: C } = useTheme();
   const { toggle, isFavorite } = useFavoritesStore();
 
   // React Query hooks — automatic caching + loading states
@@ -146,7 +146,7 @@ export default function HomeScreen() {
         />
         </Animated.View>
 
-      <View style={styles.divider} />
+      <View style={[styles.divider, { backgroundColor: C.surface }]} />
 
       {/* New Arrivals */}
       <Animated.View style={newArrivalAnim}>
@@ -195,7 +195,7 @@ export default function HomeScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: C.background }]} edges={['top']}>
       <AppHeader />
 
       {isGridLoading ? (
@@ -225,12 +225,12 @@ export default function HomeScreen() {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              tintColor={COLORS.textPrimary}
+              tintColor={C.text}
             />
           }
           ListEmptyComponent={
             <View style={styles.empty}>
-              <Text style={styles.emptyText}>No products found</Text>
+              <Text style={[styles.emptyText, { color: C.textLight }]}>No products found</Text>
             </View>
           }
         />
@@ -242,34 +242,28 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: COLORS.offWhite,
   },
   horizontalList: {
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
-    backgroundColor: COLORS.white,
     gap: SPACING.sm,
   },
   skeletonRow: {
     flexDirection: 'row',
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
-    backgroundColor: COLORS.white,
     gap: SPACING.sm,
   },
   gridContent: {
     paddingBottom: SPACING.xl,
-    backgroundColor: COLORS.offWhite,
   },
   columnWrapper: {
     paddingHorizontal: SPACING.md,
     paddingTop: SPACING.sm,
     gap: SPACING.sm,
-    backgroundColor: COLORS.white,
   },
   divider: {
     height: SPACING.sm,
-    backgroundColor: COLORS.offWhite,
   },
   gridSkeletons: {
     flex: 1,
@@ -278,7 +272,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: SPACING.md,
     gap: SPACING.sm,
-    backgroundColor: COLORS.white,
     paddingTop: SPACING.sm,
   },
   empty: {
@@ -286,7 +279,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptyText: {
-    color: COLORS.textLight,
     fontSize: 14,
   },
 });
