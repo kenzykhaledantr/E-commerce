@@ -3,12 +3,14 @@ import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { StatusBar } from 'expo-status-bar';
 import { useAuthStore } from '../store/authStore';
 import AuthNavigator from './AuthNavigator';
 import AppNavigator  from './AppNavigator'; 
 import { COLORS } from '../utils/constants';
 import OfflineBanner from '../components/common/OfflineBanner';
+import { useThemeStore } from '../store/themeStore';
+import { useTheme }      from '../hook/useTheme';
 
 function MainApp() {
   // Import here to use inside NavigationContainer
@@ -19,6 +21,21 @@ function MainApp() {
 // src/navigation/RootNavigator.tsx
 export default function RootNavigator() {
   const { isAuthenticated, isLoading, setUser, setLoading } = useAuthStore();
+   const { hydrated }                   = useThemeStore();
+  const { colors, isDark } = useTheme();
+  
+  if (isLoading || !hydrated) {
+    return (
+      <View style={{
+        flex: 1,
+        backgroundColor: colors.background,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <ActivityIndicator size="large" color={colors.accent} />
+      </View>
+    );
+  }
 
   // Check for existing user session on app start
   useEffect(() => {
@@ -55,6 +72,7 @@ export default function RootNavigator() {
 
   return (
     <NavigationContainer>
+      <StatusBar style={isDark ? 'light' : 'dark'} />
       <OfflineBanner />
        {isAuthenticated ? <MainApp /> : <AuthNavigator />}
     </NavigationContainer>

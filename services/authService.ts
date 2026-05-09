@@ -6,15 +6,22 @@ import {
   onAuthStateChanged,
   updateProfile,
   type User as FirebaseUser,
+  updatePassword,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
 } from 'firebase/auth';
 import {
   doc,
   setDoc,
   getDoc,
   serverTimestamp,
+  updateDoc
 } from 'firebase/firestore';
 import { auth, db } from './firebase';
 import type { User } from '../types';
+
+
+
 
 // ─── Convert Firebase user → our User type ─────────────────────
 const formatUser = (firebaseUser: FirebaseUser): User => ({
@@ -72,6 +79,38 @@ export const logoutUser = async (): Promise<void> => {
   await signOut(auth);
 };
 
+
+export const updateDisplayName = async (
+  newName: string
+): Promise<void> => {
+  const user = auth.currentUser;
+  if (!user) throw new Error('Not logged in');
+
+  await updateProfile(user, { displayName: newName });
+
+  // Also update Firestore profile
+  await updateDoc(doc(db, 'users', user.uid), {
+    displayName: newName,
+  });
+};
+
+export const changePassword = async (
+  currentPassword: string,
+  newPassword:     string
+): Promise<void> => {
+  const user = auth.currentUser;
+  if (!user || !user.email) throw new Error('Not logged in');
+
+  // Re-authenticate with current password first
+  const credential = EmailAuthProvider.credential(
+    user.email,
+    currentPassword
+  );
+  await reauthenticateWithCredential(user, credential);
+
+  // Now change password
+  await updatePassword(user, newPassword);
+};
 // ─── Auth state listener ───────────────────────────────────────
 // Call this once on app start. It fires immediately with the
 // current user (or null), which sets isLoading → false.

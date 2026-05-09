@@ -25,7 +25,9 @@ export type HomeStackParamList = {
 
 export type AppStackParamList = {
   MainTabs:       undefined;          // the bottom tabs
-  SavedAddresses: undefined;          // ← moved here
+  SavedAddresses: undefined;
+  PaymentMethods: undefined;
+  AccountSettings: undefined; // ← moved here
   // add more shared screens here as needed
 };
 

@@ -78,7 +78,16 @@ export interface DeliveryMethod {
   estimatedDays: number;
 }
 
-
+// src/types/index.ts — add PaymentCard interface
+export interface PaymentCard {
+  id:           string;
+  cardHolder:   string;
+  lastFour:     string;       // only last 4 digits stored
+  expiry:       string;       // MM/YY
+  cardType:     'visa' | 'mastercard' | 'amex' | 'other';
+  isDefault:    boolean;
+  color:        string;       // card background color
+}
 
 export type PaymentMethod = 'card' | 'paypal' | 'apple_pay';
 
