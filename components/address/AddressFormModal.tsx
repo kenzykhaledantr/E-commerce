@@ -14,7 +14,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FormInput from '../common/FormInput';
-import { COLORS, SPACING, RADIUS } from '../../utils/constants';
+import { SPACING, RADIUS } from '../../utils/constants';
+import { useTheme } from '../../hook/useTheme';
 import type { Address } from '../../types';
 
 const LABEL_OPTIONS = ['Home', 'Office', 'Other'];
@@ -44,6 +45,7 @@ export default function AddressFormModal({
   initialData,
   isSaving = false,
 }: AddressFormModalProps) {
+  const { colors: C } = useTheme();
   const [form,   setForm]   = useState(EMPTY_FORM);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -97,17 +99,17 @@ export default function AddressFormModal({
       presentationStyle="pageSheet"
       onRequestClose={onClose}
     >
-      <SafeAreaView style={styles.safe}>
+      <SafeAreaView style={[styles.safe, { backgroundColor: C.background }]}>
         <KeyboardAvoidingView
           style={styles.flex}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
           {/* Header */}
-          <View style={styles.header}>
+          <View style={[styles.header, { backgroundColor: C.surface, borderBottomColor: C.border }]}>
             <TouchableOpacity onPress={onClose} style={styles.headerBtn}>
-              <Text style={styles.cancelText}>Cancel</Text>
+              <Text style={[styles.cancelText, { color: C.textSecondary }]}>Cancel</Text>
             </TouchableOpacity>
-            <Text style={styles.headerTitle}>
+            <Text style={[styles.headerTitle, { color: C.text }]}>
               {initialData ? 'EDIT ADDRESS' : 'NEW ADDRESS'}
             </Text>
             <TouchableOpacity
@@ -115,7 +117,7 @@ export default function AddressFormModal({
               style={styles.headerBtn}
               disabled={isSaving}
             >
-              <Text style={[styles.saveText, isSaving && styles.savingText]}>
+              <Text style={[styles.saveText, { color: C.accent, opacity: isSaving ? 0.5 : 1 }]}>
                 {isSaving ? 'Saving...' : 'Save'}
               </Text>
             </TouchableOpacity>
@@ -128,21 +130,23 @@ export default function AddressFormModal({
           >
             {/* Label picker */}
             <View style={styles.section}>
-              <Text style={styles.sectionLabel}>ADDRESS LABEL</Text>
+              <Text style={[styles.sectionLabel, { color: C.textSecondary }]}>ADDRESS LABEL</Text>
               <View style={styles.labelRow}>
                 {LABEL_OPTIONS.map((opt) => (
                   <TouchableOpacity
                     key={opt}
                     style={[
                       styles.labelChip,
-                      form.label === opt && styles.labelChipActive,
+                      { backgroundColor: C.inputBg, borderColor: C.border },
+                      form.label === opt && { backgroundColor: C.primary, borderColor: C.primary },
                     ]}
                     onPress={() => setField('label', opt)}
                   >
                     <Text
                       style={[
                         styles.labelChipText,
-                        form.label === opt && styles.labelChipTextActive,
+                        { color: C.textSecondary },
+                        form.label === opt && { color: C.textInverse },
                       ]}
                     >
                       {opt === 'Home'   ? '🏠 Home'   :
@@ -213,10 +217,10 @@ export default function AddressFormModal({
             </View>
 
             {/* Set as default toggle */}
-            <View style={styles.defaultRow}>
+            <View style={[styles.defaultRow, { backgroundColor: C.inputBg, borderColor: C.border }]}>
               <View style={styles.defaultInfo}>
-                <Text style={styles.defaultLabel}>Set as default address</Text>
-                <Text style={styles.defaultSub}>
+                <Text style={[styles.defaultLabel, { color: C.text }]}>Set as default address</Text>
+                <Text style={[styles.defaultSub, { color: C.textSecondary }]}>
                   Used automatically at checkout
                 </Text>
               </View>
@@ -224,10 +228,10 @@ export default function AddressFormModal({
                 value={form.isDefault}
                 onValueChange={(v) => setField('isDefault', v)}
                 trackColor={{
-                  false: COLORS.border,
-                  true:  COLORS.accent,
+                  false: C.border,
+                  true:  C.accent,
                 }}
-                thumbColor={COLORS.white}
+                thumbColor={C.textInverse}
               />
             </View>
           </ScrollView>
@@ -238,7 +242,7 @@ export default function AddressFormModal({
 }
 
 const styles = StyleSheet.create({
-  safe:  { flex: 1, backgroundColor: COLORS.white },
+  safe:  { flex: 1 },
   flex:  { flex: 1 },
   header: {
     flexDirection:    'row',
@@ -247,25 +251,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.md,
     paddingVertical:   SPACING.sm,
     borderBottomWidth: 0.5,
-    borderBottomColor: COLORS.border,
-    backgroundColor:   COLORS.white,
   },
   headerBtn:   { minWidth: 60 },
   headerTitle: {
     fontSize:   12,
     fontWeight: '700',
     letterSpacing: 2,
-    color:      COLORS.textPrimary,
   },
   cancelText: {
-    fontSize:  15,
-    color:     COLORS.textSecondary,
+    fontSize: 15,
   },
   saveText: {
     fontSize:   15,
     fontWeight: '700',
-    color:      COLORS.accent,
-    textAlign:  'right',
+    textAlign: 'right',
   },
   savingText: { opacity: 0.5 },
   content: {
@@ -278,7 +277,6 @@ const styles = StyleSheet.create({
     fontSize:      11,
     letterSpacing: 2,
     fontWeight:    '700',
-    color:         COLORS.textSecondary,
   },
   labelRow: {
     flexDirection: 'row',
@@ -286,24 +284,14 @@ const styles = StyleSheet.create({
   },
   labelChip: {
     flex:             1,
-    paddingVertical:  SPACING.sm,
+    paddingVertical: SPACING.sm,
     borderRadius:     RADIUS.md,
     borderWidth:      1.5,
-    borderColor:      COLORS.border,
     alignItems:       'center',
-    backgroundColor:  COLORS.offWhite,
-  },
-  labelChipActive: {
-    borderColor:     COLORS.primary,
-    backgroundColor: COLORS.primary,
   },
   labelChipText: {
     fontSize:   13,
     fontWeight: '600',
-    color:      COLORS.textSecondary,
-  },
-  labelChipTextActive: {
-    color: COLORS.white,
   },
   fields: { gap: SPACING.md },
   row: {
@@ -316,22 +304,18 @@ const styles = StyleSheet.create({
     flexDirection:    'row',
     alignItems:       'center',
     justifyContent:   'space-between',
-    backgroundColor:  COLORS.offWhite,
     padding:          SPACING.md,
     borderRadius:     RADIUS.md,
     borderWidth:      0.5,
-    borderColor:      COLORS.border,
     marginTop:        SPACING.sm,
   },
   defaultInfo: { flex: 1, marginRight: SPACING.md },
   defaultLabel: {
     fontSize:   15,
     fontWeight: '600',
-    color:      COLORS.textPrimary,
   },
   defaultSub: {
-    fontSize:  12,
-    color:     COLORS.textSecondary,
+    fontSize: 12,
     marginTop: 2,
   },
 });

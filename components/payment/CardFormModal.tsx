@@ -22,7 +22,8 @@ import {
   formatExpiry,
 } from '../../services/cardService';
 import VisualCard from './VisualCard';
-import { COLORS, SPACING, RADIUS } from '../../utils/constants';
+import { SPACING, RADIUS } from '../../utils/constants';
+import { useTheme } from '../../hook/useTheme';
 import type { PaymentCard } from '../../types';
 
 interface CardFormModalProps {
@@ -46,6 +47,7 @@ export default function CardFormModal({
   onSave,
   isSaving = false,
 }: CardFormModalProps) {
+  const { colors: C } = useTheme();
   const [form,   setForm]   = useState(EMPTY);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -136,19 +138,19 @@ export default function CardFormModal({
       presentationStyle="pageSheet"
       onRequestClose={onClose}
     >
-      <SafeAreaView style={styles.safe}>
+      <SafeAreaView style={[styles.safe, { backgroundColor: C.background }]}>
         <KeyboardAvoidingView
           style={styles.flex}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
           {/* Header */}
-          <View style={styles.header}>
+          <View style={[styles.header, { borderBottomColor: C.border }]}>
             <TouchableOpacity onPress={onClose}>
-              <Text style={styles.cancelText}>Cancel</Text>
+              <Text style={[styles.cancelText, { color: C.textSecondary }]}>Cancel</Text>
             </TouchableOpacity>
-            <Text style={styles.headerTitle}>ADD NEW CARD</Text>
+            <Text style={[styles.headerTitle, { color: C.text }]}>ADD NEW CARD</Text>
             <TouchableOpacity onPress={handleSave} disabled={isSaving}>
-              <Text style={[styles.saveText, isSaving && { opacity: 0.5 }]}>
+              <Text style={[styles.saveText, { color: C.accent, opacity: isSaving ? 0.5 : 1 }]}>
                 {isSaving ? 'Saving...' : 'Save'}
               </Text>
             </TouchableOpacity>
@@ -208,20 +210,20 @@ export default function CardFormModal({
 
             {/* ── Form fields ── */}
             <View style={styles.formSection}>
-              <Text style={styles.sectionLabel}>CARD NUMBER</Text>
+              <Text style={[styles.sectionLabel, { color: C.textSecondary }]}>CARD NUMBER</Text>
               <View style={[
                 styles.inputBox,
-                errors.cardNumber && styles.inputBoxError,
+                { backgroundColor: C.inputBg, borderColor: errors.cardNumber ? C.error : C.border },
               ]}>
                 <TextInput
-                  style={styles.input}
+                  style={[styles.input, { color: C.text }]}
                   value={form.cardNumber}
                   onChangeText={(t) =>
                     setField('cardNumber', formatCardNumber(t))
                   }
                   onFocus={flipToFront}
                   placeholder="0000 0000 0000 0000"
-                  placeholderTextColor={COLORS.textLight}
+                  placeholderTextColor={C.textLight}
                   keyboardType="number-pad"
                   maxLength={19}
                 />
@@ -232,67 +234,67 @@ export default function CardFormModal({
                 </Text>
               </View>
               {errors.cardNumber && (
-                <Text style={styles.error}>{errors.cardNumber}</Text>
+                <Text style={[styles.error, { color: C.error }]}>{errors.cardNumber}</Text>
               )}
             </View>
 
             <View style={styles.formSection}>
-              <Text style={styles.sectionLabel}>CARDHOLDER NAME</Text>
+              <Text style={[styles.sectionLabel, { color: C.textSecondary }]}>CARDHOLDER NAME</Text>
               <View style={[
                 styles.inputBox,
-                errors.cardHolder && styles.inputBoxError,
+                { backgroundColor: C.inputBg, borderColor: errors.cardHolder ? C.error : C.border },
               ]}>
                 <TextInput
-                  style={styles.input}
+                  style={[styles.input, { color: C.text }]}
                   value={form.cardHolder}
                   onChangeText={(t) => setField('cardHolder', t)}
                   onFocus={flipToFront}
                   placeholder="Julian Alexander"
-                  placeholderTextColor={COLORS.textLight}
+                  placeholderTextColor={C.textLight}
                   autoCapitalize="words"
                   autoCorrect={false}
                 />
               </View>
               {errors.cardHolder && (
-                <Text style={styles.error}>{errors.cardHolder}</Text>
+                <Text style={[styles.error, { color: C.error }]}>{errors.cardHolder}</Text>
               )}
             </View>
 
             <View style={styles.row}>
               {/* Expiry */}
               <View style={[styles.formSection, styles.flex]}>
-                <Text style={styles.sectionLabel}>EXPIRY DATE</Text>
+                <Text style={[styles.sectionLabel, { color: C.textSecondary }]}>EXPIRY DATE</Text>
                 <View style={[
                   styles.inputBox,
-                  errors.expiry && styles.inputBoxError,
+                  { backgroundColor: C.inputBg, borderColor: errors.expiry ? C.error : C.border },
                 ]}>
                   <TextInput
-                    style={styles.input}
+                    style={[styles.input, { color: C.text }]}
                     value={form.expiry}
                     onChangeText={(t) =>
                       setField('expiry', formatExpiry(t))
                     }
                     onFocus={flipToFront}
                     placeholder="MM/YY"
-                    placeholderTextColor={COLORS.textLight}
+                    placeholderTextColor={C.textLight}
                     keyboardType="number-pad"
                     maxLength={5}
                   />
                 </View>
                 {errors.expiry && (
-                  <Text style={styles.error}>{errors.expiry}</Text>
+                  <Text style={[styles.error, { color: C.error }]}>{errors.expiry}</Text>
                 )}
               </View>
 
               {/* CVV */}
               <View style={[styles.formSection, styles.flex]}>
-                <Text style={styles.sectionLabel}>CVV</Text>
+                <Text style={[styles.sectionLabel, { color: C.textSecondary }]}>CVV</Text>
                 <View style={[
                   styles.inputBox,
-                  errors.cvv && styles.inputBoxError,
+                  { backgroundColor: C.inputBg, borderColor: errors.cvv ? C.error : C.border },
                 ]}>
                   <TextInput
-                    style={styles.input}
+                    style={[styles.input, { color: C.text }]}
                     value={form.cvv}
                     onChangeText={(t) =>
                       setField('cvv', t.replace(/\D/g, '').slice(0, 4))
@@ -300,31 +302,31 @@ export default function CardFormModal({
                     onFocus={flipToBack}
                     onBlur={flipToFront}
                     placeholder="•••"
-                    placeholderTextColor={COLORS.textLight}
+                    placeholderTextColor={C.textLight}
                     keyboardType="number-pad"
                     secureTextEntry
                     maxLength={4}
                   />
                 </View>
                 {errors.cvv && (
-                  <Text style={styles.error}>{errors.cvv}</Text>
+                  <Text style={[styles.error, { color: C.error }]}>{errors.cvv}</Text>
                 )}
               </View>
             </View>
 
             {/* Security note */}
-            <View style={styles.securityNote}>
-              <Text style={styles.securityIcon}>🔒</Text>
-              <Text style={styles.securityText}>
+            <View style={[styles.securityNote, { backgroundColor: C.skeletonBase, borderColor: C.accent }]}>
+              <Text style={[styles.securityIcon, { color: C.accent }]}>🔒</Text>
+              <Text style={[styles.securityText, { color: C.accent }]}>
                 Your card details are encrypted. CVV is never stored.
               </Text>
             </View>
 
             {/* Set as default */}
-            <View style={styles.defaultRow}>
+            <View style={[styles.defaultRow, { backgroundColor: C.inputBg, borderColor: C.border }]}>
               <View style={styles.defaultInfo}>
-                <Text style={styles.defaultLabel}>Set as default card</Text>
-                <Text style={styles.defaultSub}>
+                <Text style={[styles.defaultLabel, { color: C.text }]}>Set as default card</Text>
+                <Text style={[styles.defaultSub, { color: C.textSecondary }]}>
                   Used automatically at checkout
                 </Text>
               </View>
@@ -332,10 +334,10 @@ export default function CardFormModal({
                 value={form.isDefault}
                 onValueChange={(v) => setField('isDefault', v)}
                 trackColor={{
-                  false: COLORS.border,
-                  true:  COLORS.accent,
+                  false: C.border,
+                  true:  C.accent,
                 }}
-                thumbColor={COLORS.white}
+                thumbColor={C.textInverse}
               />
             </View>
           </ScrollView>
@@ -346,7 +348,7 @@ export default function CardFormModal({
 }
 
 const styles = StyleSheet.create({
-  safe:   { flex: 1, backgroundColor: COLORS.white },
+  safe:   { flex: 1 },
   flex:   { flex: 1 },
   header: {
     flexDirection:     'row',
@@ -355,19 +357,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.md,
     paddingVertical:   SPACING.sm,
     borderBottomWidth: 0.5,
-    borderBottomColor: COLORS.border,
   },
-  cancelText:  { fontSize: 15, color: COLORS.textSecondary },
+  cancelText:  { fontSize: 15 },
   headerTitle: {
     fontSize:      12,
     fontWeight:    '700',
     letterSpacing: 2,
-    color:         COLORS.textPrimary,
   },
   saveText: {
     fontSize:   15,
     fontWeight: '700',
-    color:      COLORS.accent,
   },
   content: {
     padding:       SPACING.md,
@@ -414,7 +413,6 @@ const styles = StyleSheet.create({
   },
   cvvBox: {
     flex:            1,
-    backgroundColor: COLORS.white,
     borderRadius:    4,
     paddingVertical: 8,
     paddingHorizontal: SPACING.sm,
@@ -423,12 +421,10 @@ const styles = StyleSheet.create({
   cvvValue: {
     fontSize:      16,
     fontWeight:    '700',
-    color:         COLORS.textPrimary,
     letterSpacing: 4,
   },
   cvvLabel: {
     fontSize:   12,
-    color:      'rgba(255,255,255,0.7)',
     fontWeight: '600',
   },
   backBottom: {
@@ -439,7 +435,6 @@ const styles = StyleSheet.create({
   backCardType: {
     fontSize:      14,
     fontWeight:    '700',
-    color:         'rgba(255,255,255,0.7)',
     letterSpacing: 2,
   },
 
@@ -453,44 +448,36 @@ const styles = StyleSheet.create({
     fontSize:      11,
     letterSpacing: 2,
     fontWeight:    '700',
-    color:         COLORS.textSecondary,
   },
   inputBox: {
     flexDirection:   'row',
     alignItems:      'center',
     borderWidth:     1,
-    borderColor:     COLORS.border,
     borderRadius:    RADIUS.md,
-    backgroundColor: COLORS.offWhite,
     paddingHorizontal: SPACING.md,
     height:          52,
   },
-  inputBoxError: { borderColor: COLORS.error },
   input: {
     flex:      1,
     fontSize:  16,
-    color:     COLORS.textPrimary,
     height:    '100%',
   },
   cardTypeIndicator: { fontSize: 20 },
-  error: { fontSize: 12, color: COLORS.error },
+  error: { fontSize: 12 },
 
   // Security note
   securityNote: {
     flexDirection:   'row',
     alignItems:      'center',
     gap:             SPACING.sm,
-    backgroundColor: '#F0FFF4',
     padding:         SPACING.sm,
     borderRadius:    RADIUS.md,
     borderWidth:     0.5,
-    borderColor:     COLORS.accent,
   },
   securityIcon: { fontSize: 16 },
   securityText: {
     flex:      1,
-    fontSize:  12,
-    color:     COLORS.accent,
+    fontSize: 12,
     lineHeight: 18,
   },
 
@@ -499,21 +486,17 @@ const styles = StyleSheet.create({
     flexDirection:   'row',
     alignItems:      'center',
     justifyContent:  'space-between',
-    backgroundColor: COLORS.offWhite,
     padding:         SPACING.md,
     borderRadius:    RADIUS.md,
     borderWidth:     0.5,
-    borderColor:     COLORS.border,
   },
   defaultInfo:  { flex: 1, marginRight: SPACING.md },
   defaultLabel: {
     fontSize:   15,
     fontWeight: '600',
-    color:      COLORS.textPrimary,
   },
   defaultSub: {
-    fontSize:  12,
-    color:     COLORS.textSecondary,
+    fontSize: 12,
     marginTop: 2,
   },
 });

@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text, StyleSheet, Platform } from 'react-native';
 import type { MainTabParamList } from '../types/navigation';
 import { COLORS } from '../utils/constants';
-
+import { useTheme } from '../hook/useTheme';
 import HomeNavigator from './HomeNavigator';
 import CategoriesScreen from '../src/screens/main/CategoriesScreen';
 import SavedScreen from '../src/screens/main/SavedScreen';
@@ -24,12 +24,13 @@ function TabIcon({
   symbol: string;
   focused: boolean;
 }) {
+  const { colors: C } = useTheme();
   return (
     <View style={styles.tabItem}>
-      <Text style={[styles.tabSymbol, focused && styles.tabSymbolActive]}>
+      <Text style={[styles.tabSymbol, { color: focused ? C.text : C.textLight }]}>
         {symbol}
       </Text>
-      <Text style={[styles.tabLabel, focused && styles.tabLabelActive]}>
+      <Text style={[styles.tabLabel, { color: focused ? C.text : C.textLight, fontWeight: focused ? '700' : '200' }]}>
         {label}
       </Text>
     </View>
@@ -37,12 +38,22 @@ function TabIcon({
 }
 
 export default function MainNavigator() {
+  const { colors: C } = useTheme();
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarStyle: styles.tabBar,
-        tabBarShowLabel: false,    // we render custom labels inside TabIcon
+        tabBarStyle: {
+          backgroundColor:  C.tabBar,
+          borderTopColor:   C.border,
+          borderTopWidth:   0.5,
+          height:           Platform.OS === 'ios' ? 85 : 65,
+          paddingBottom:    Platform.OS === 'ios' ? 28 : 8,
+          paddingTop:       8,
+          elevation:        0,
+          shadowOpacity:    0,
+        },
+        tabBarShowLabel: false,
       }}
     >
       <Tab.Screen
@@ -87,35 +98,15 @@ export default function MainNavigator() {
 }
 
 const styles = StyleSheet.create({
-  tabBar: {
-    backgroundColor: COLORS.white,
-    borderTopWidth: 0.5,
-    borderTopColor: COLORS.border,
-    height: Platform.OS === 'ios' ? 85 : 65,
-    paddingTop: 8,
-    paddingBottom: Platform.OS === 'ios' ? 28 : 8,
-    elevation: 0,              // remove Android shadow
-    shadowOpacity: 0,          // remove iOS shadow
-  },
   tabItem: {
     alignItems: 'center',
     gap: 5,
   },
   tabSymbol: {
     fontSize: 20,
-    color: COLORS.textLight,
-  },
-  tabSymbolActive: {
-    color: COLORS.textPrimary,
   },
   tabLabel: {
     fontSize: 9,
     letterSpacing: 0.3,
-    color: COLORS.textLight,
-    fontWeight: '200',
-  },
-  tabLabelActive: {
-    color: COLORS.textPrimary,
-    fontWeight: '700',
   },
 });

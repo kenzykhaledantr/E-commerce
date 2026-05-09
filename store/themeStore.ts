@@ -13,7 +13,7 @@ interface ThemeState {
 const STORAGE_KEY = '@elite_retail_theme';
 
 export const useThemeStore = create<ThemeState>((set, get) => ({
-  isDark:    false,
+  isDark:    true,
   hydrated:  false,
 
   toggleTheme: async () => {

@@ -19,6 +19,7 @@ import {
 } from '../../../services/notificationService';
 import { COLORS, SPACING, RADIUS } from '../../../utils/constants';
 import type { Product } from '../../../types';
+import { useTheme } from '../../../hook/useTheme';
 
 const { width } = Dimensions.get('window');
 
@@ -26,7 +27,8 @@ export default function SavedScreen() {
   const navigation          = useNavigation<any>();
   const { ids, toggle }     = useFavoritesStore();
   const { data: allProducts } = useProducts();
-  const addItem             = useCartStore((s) => s.addItem);
+  const addItem = useCartStore((s) => s.addItem);
+  const { colors: C } = useTheme();
 
   // Filter only favorited products
   const savedProducts = allProducts?.filter((p) => ids.includes(p.id)) ?? [];
@@ -40,13 +42,16 @@ export default function SavedScreen() {
 
   if (savedProducts.length === 0) {
     return (
-      <SafeAreaView style={styles.safe}>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>ELITE RETAIL</Text>
+      <SafeAreaView style={[styles.safe, { backgroundColor: C.background }]}>
+        <View style={[styles.header, {
+          backgroundColor:  C.surface,
+          borderBottomColor: C.border,
+        }]}>
+          <Text style={[styles.headerTitle, { color: C.text }]}>ELITE RETAIL</Text>
         </View>
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyIcon}>♡</Text>
-          <Text style={styles.emptyTitle}>Your wishlist is empty</Text>
+          <Text style={[styles.emptyIcon, { color: C.text }]}>♡</Text>
+          <Text style={[styles.emptyTitle, { color: C.text }]}>Your wishlist is empty</Text>
           <Text style={styles.emptySubtitle}>
             Tap the heart icon on any product to save it here.
           </Text>
@@ -62,25 +67,31 @@ export default function SavedScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: C.background }]}>
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>ELITE RETAIL</Text>
+      <View style={[styles.header, {
+        backgroundColor:  C.surface,
+        borderBottomColor: C.border,
+      }]}>
+        <Text style={[styles.headerTitle, { color: C.text }]}>ELITE RETAIL</Text>
       </View>
 
       {/* Title row */}
-      <View style={styles.titleRow}>
+      <View style={[styles.titleRow, {
+        backgroundColor:  C.surface,
+        borderBottomColor: C.border,
+      }]}>
         <View>
-          <Text style={styles.title}>Saved Items</Text>
-          <Text style={styles.subtitle}>{savedProducts.length} items</Text>
+          <Text style={[styles.title, { color: C.text }]}>Saved Items</Text>
+          <Text style={[styles.subtitle, { color: C.textSecondary }]}>{savedProducts.length} items</Text>
         </View>
         {/* Test price drop notification button */}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.testBtn}
           onPress={handleTestPriceDrop}
         >
           <Text style={styles.testBtnText}>Test 🔔</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       <FlatList

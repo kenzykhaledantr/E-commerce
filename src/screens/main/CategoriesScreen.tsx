@@ -17,6 +17,7 @@ import SkeletonCard from '../../../components/common/SkeletonCard';
 import { useFavoritesStore } from '../../../store/favoritesStore';
 import { COLORS, SPACING, RADIUS } from '../../../utils/constants';
 import type { ProductCategory } from '../../../types';
+import { useTheme } from '../../../hook/useTheme';
 
 const { width } = Dimensions.get('window');
 
@@ -33,14 +34,14 @@ export default function CategoriesScreen() {
   const navigation              = useNavigation<any>();
   const [selected, setSelected] = useState<ProductCategory>('handbags');
   const { toggle, isFavorite }  = useFavoritesStore();
-
+const { colors: C } = useTheme();
   const { data: products, isLoading } = useProductsByCategory(selected);
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: C.background }]}>
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>ELITE RETAIL</Text>
+      <View style={[styles.header, { backgroundColor: C.surface }]}>
+        <Text style={[styles.headerTitle, { color: C.text }]}>ELITE RETAIL</Text>
       </View>
 
       <FlatList
@@ -51,7 +52,7 @@ export default function CategoriesScreen() {
         ListHeaderComponent={
           <View>
             {/* Category chips */}
-            <View style={styles.chipGrid}>
+            <View style={[styles.chipGrid, { backgroundColor: C.surface, borderBottomColor: C.border }]}>
               {CATEGORIES.map((cat) => (
                 <TouchableOpacity
                   key={cat.key}
@@ -77,8 +78,8 @@ export default function CategoriesScreen() {
             </View>
 
             {/* Section title */}
-            <View style={styles.sectionRow}>
-              <Text style={styles.sectionTitle}>
+            <View style={[styles.sectionRow, { backgroundColor: C.surface, borderBottomColor: C.border }]}>
+              <Text style={[styles.sectionTitle, { color: C.text }]}>
                 {CATEGORIES.find((c) => c.key === selected)?.label}
               </Text>
               <Text style={styles.count}>

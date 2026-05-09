@@ -8,7 +8,8 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-import { COLORS, SPACING, RADIUS } from '../../utils/constants';
+import { SPACING, RADIUS } from '../../utils/constants';
+import { useTheme } from '../../hook/useTheme';
 import type { Address } from '../../types';
 
 interface AddressCardProps {
@@ -24,6 +25,7 @@ export default function AddressCard({
   onDelete,
   onSetDefault,
 }: AddressCardProps) {
+  const { colors: C } = useTheme();
   const scale = useRef(new Animated.Value(1)).current;
 
   const handlePressIn = () =>
@@ -62,7 +64,11 @@ export default function AddressCard({
   return (
     <Animated.View style={{ transform: [{ scale }] }}>
       <TouchableOpacity
-        style={[styles.card, address.isDefault && styles.cardDefault]}
+        style={[
+          styles.card,
+          { backgroundColor: C.card, borderColor: address.isDefault ? C.accent : C.border },
+          address.isDefault && { borderWidth: 1.5 },
+        ]}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         onPress={onEdit}
@@ -74,10 +80,10 @@ export default function AddressCard({
             <Text style={styles.labelIcon}>
               {LABEL_ICONS[address.label] ?? '📍'}
             </Text>
-            <Text style={styles.label}>{address.label.toUpperCase()}</Text>
+            <Text style={[styles.label, { color: C.textSecondary }]}>{address.label.toUpperCase()}</Text>
             {address.isDefault && (
-              <View style={styles.defaultBadge}>
-                <Text style={styles.defaultBadgeText}>DEFAULT</Text>
+              <View style={[styles.defaultBadge, { backgroundColor: C.accent }]}>
+                <Text style={[styles.defaultBadgeText, { color: C.textInverse }]}>DEFAULT</Text>
               </View>
             )}
           </View>
@@ -85,39 +91,39 @@ export default function AddressCard({
           {/* Action buttons */}
           <View style={styles.actions}>
             <TouchableOpacity
-              style={styles.actionBtn}
+              style={[styles.actionBtn, { backgroundColor: C.skeletonBase }]}
               onPress={onEdit}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
-              <Text style={styles.actionText}>✎</Text>
+              <Text style={[styles.actionText, { color: C.textSecondary }]}>✎</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.actionBtn}
+              style={[styles.actionBtn, { backgroundColor: C.skeletonBase }]}
               onPress={handleDelete}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
-              <Text style={[styles.actionText, styles.deleteText]}>🗑</Text>
+              <Text style={[styles.actionText, styles.deleteText, { color: C.textSecondary }]}>🗑</Text>
             </TouchableOpacity>
           </View>
         </View>
 
         {/* Address details */}
         <View style={styles.details}>
-          <Text style={styles.name}>{address.fullName}</Text>
-          <Text style={styles.addressLine}>{address.street}</Text>
-          <Text style={styles.addressLine}>
+          <Text style={[styles.name, { color: C.text }]}>{address.fullName}</Text>
+          <Text style={[styles.addressLine, { color: C.textSecondary }]}>{address.street}</Text>
+          <Text style={[styles.addressLine, { color: C.textSecondary }]}>
             {address.city}, {address.postalCode}
           </Text>
-          <Text style={styles.phone}>{address.phone}</Text>
+          <Text style={[styles.phone, { color: C.textLight }]}>{address.phone}</Text>
         </View>
 
         {/* Set as default */}
         {!address.isDefault && (
           <TouchableOpacity
-            style={styles.setDefaultBtn}
+            style={[styles.setDefaultBtn, { borderColor: C.border }]}
             onPress={onSetDefault}
           >
-            <Text style={styles.setDefaultText}>SET AS DEFAULT</Text>
+            <Text style={[styles.setDefaultText, { color: C.textSecondary }]}>SET AS DEFAULT</Text>
           </TouchableOpacity>
         )}
       </TouchableOpacity>
@@ -127,21 +133,15 @@ export default function AddressCard({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor:  COLORS.white,
     borderRadius:     RADIUS.md,
     padding:          SPACING.md,
     borderWidth:      1,
-    borderColor:      COLORS.border,
     gap:              SPACING.sm,
     shadowColor:      '#000',
     shadowOffset:     { width: 0, height: 2 },
     shadowOpacity:    0.05,
     shadowRadius:     8,
     elevation:        2,
-  },
-  cardDefault: {
-    borderColor: COLORS.accent,
-    borderWidth: 1.5,
   },
   topRow: {
     flexDirection:  'row',
@@ -158,10 +158,8 @@ const styles = StyleSheet.create({
     fontSize:      11,
     letterSpacing: 2,
     fontWeight:    '700',
-    color:         COLORS.textSecondary,
   },
   defaultBadge: {
-    backgroundColor: COLORS.accent,
     paddingHorizontal: 6,
     paddingVertical:   2,
     borderRadius:      RADIUS.full,
@@ -170,7 +168,6 @@ const styles = StyleSheet.create({
   defaultBadgeText: {
     fontSize:      9,
     fontWeight:    '700',
-    color:         COLORS.white,
     letterSpacing: 1,
   },
   actions: {
@@ -182,7 +179,6 @@ const styles = StyleSheet.create({
     height:         32,
     alignItems:     'center',
     justifyContent: 'center',
-    backgroundColor: COLORS.offWhite,
     borderRadius:   RADIUS.sm,
   },
   actionText:  { fontSize: 15 },
@@ -191,17 +187,14 @@ const styles = StyleSheet.create({
   name: {
     fontSize:   15,
     fontWeight: '600',
-    color:      COLORS.textPrimary,
   },
   addressLine: {
-    fontSize: 14,
-    color:    COLORS.textSecondary,
+    fontSize:   14,
     lineHeight: 20,
   },
   phone: {
     fontSize:   13,
-    color:      COLORS.textLight,
-    marginTop:  2,
+    marginTop: 2,
   },
   setDefaultBtn: {
     alignSelf:       'flex-start',
@@ -209,13 +202,11 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: SPACING.sm,
     borderWidth:     1,
-    borderColor:     COLORS.border,
     borderRadius:    RADIUS.full,
   },
   setDefaultText: {
     fontSize:      10,
     letterSpacing: 1.5,
     fontWeight:    '600',
-    color:         COLORS.textSecondary,
   },
 });

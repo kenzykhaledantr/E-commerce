@@ -125,7 +125,7 @@ const MENU_ITEMS = [
             >
               <View style={styles.menuLeft}>
                 <Text style={styles.menuIcon}>{item.icon}</Text>
-                <Text style={styles.menuLabel}>{item.label}</Text>
+                <Text style={[styles.menuLabel, { color: C.text }]}>{item.label}</Text>
               </View>
               <Text style={[styles.menuArrow, { color: C.textLight }]}>›</Text>
             </TouchableOpacity>
@@ -138,7 +138,7 @@ const MENU_ITEMS = [
             activeOpacity={0.7}
           >
             <View style={styles.menuLeft}>
-              <Text style={styles.menuIcon}>↪</Text>
+              <Text style={[styles.menuIcon,{color:C.text}]}>↪</Text>
               <Text style={[styles.menuLabel, { color: C.error }]}>Logout</Text>
             </View>
           </TouchableOpacity>
@@ -170,9 +170,15 @@ const MENU_ITEMS = [
         )}
 
         {/* Tailored for you */}
-        <View style={styles.tailoredSection}>
-          <View style={styles.tailoredHeader}>
-            <Text style={styles.sectionTitle}>Tailored for You</Text>
+        <View style={[styles.tailoredSection, {
+          backgroundColor:  C.surface,
+          borderTopColor:   C.border,
+          borderBottomColor: C.border,
+        }]}>
+          <View style={[styles.tailoredHeader, {
+            backgroundColor: C.surface,
+          }]}>
+            <Text style={[styles.sectionTitle,{color:C.text}]}>Tailored for You</Text>
             <TouchableOpacity>
               <Text style={styles.viewAll}>VIEW ALL</Text>
             </TouchableOpacity>

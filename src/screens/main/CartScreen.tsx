@@ -12,7 +12,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { useCartStore } from '../../../store/cartStore';
 import CartItemCard from '../../../components/cart/CartItemCard';
-import { COLORS, SPACING, RADIUS } from '../../../utils/constants';
+import { SPACING, RADIUS } from '../../../utils/constants';
+import { useTheme } from '../../../hook/useTheme';
 import type { CartItem } from '../../../types';
 
 const DELIVERY_METHODS = [
@@ -34,6 +35,7 @@ const DELIVERY_METHODS = [
 
 export default function CartScreen() {
   const navigation = useNavigation<any>();
+  const { colors: C } = useTheme();
   const { items, totalPrice, totalItems, clearCart } = useCartStore();
   const [selectedDelivery, setSelectedDelivery] = React.useState(
     DELIVERY_METHODS[0]
@@ -67,25 +69,25 @@ export default function CartScreen() {
 
   if (items.length === 0) {
     return (
-      <SafeAreaView style={styles.safe}>
-        <View style={styles.header}>
+      <SafeAreaView style={[styles.safe, { backgroundColor: C.background }]}>
+        <View style={[styles.header, { backgroundColor: C.surface, borderBottomColor: C.border }]}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={styles.backText}>←</Text>
+            <Text style={[styles.backText, { color: C.text }]}>←</Text>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>YOUR CART</Text>
+          <Text style={[styles.headerTitle, { color: C.text }]}>YOUR CART</Text>
           <View style={{ width: 40 }} />
         </View>
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyIcon}>🛍</Text>
-          <Text style={styles.emptyTitle}>Your cart is empty</Text>
-          <Text style={styles.emptySubtitle}>
+          <Text style={[styles.emptyIcon, { color: C.textLight }]}>🛍</Text>
+          <Text style={[styles.emptyTitle, { color: C.text }]}>Your cart is empty</Text>
+          <Text style={[styles.emptySubtitle, { color: C.textSecondary }]}>
             Add items to get started
           </Text>
           <TouchableOpacity
-            style={styles.shopBtn}
+            style={[styles.shopBtn, { borderColor: C.primary }]}
             onPress={() => navigation.goBack()}
           >
-            <Text style={styles.shopBtnText}>CONTINUE SHOPPING</Text>
+            <Text style={[styles.shopBtnText, { color: C.primary }]}>CONTINUE SHOPPING</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -94,7 +96,7 @@ export default function CartScreen() {
 
   const ListHeader = () => (
     <View>
-      <Text style={styles.subTitle}>
+      <Text style={[styles.subTitle, { color: C.textSecondary }]}>
         Review your selections before heading to checkout.
       </Text>
     </View>
@@ -103,13 +105,14 @@ export default function CartScreen() {
   const ListFooter = () => (
     <View style={styles.footer}>
       {/* Delivery Methods */}
-      <Text style={styles.sectionLabel}>DELIVERY METHOD</Text>
+      <Text style={[styles.sectionLabel, { color: C.textSecondary }]}>DELIVERY METHOD</Text>
       {DELIVERY_METHODS.map((method) => (
         <TouchableOpacity
           key={method.id}
           style={[
             styles.deliveryOption,
-            selectedDelivery.id === method.id && styles.deliveryOptionActive,
+            { backgroundColor: C.card, borderColor: C.border },
+            selectedDelivery.id === method.id && { borderColor: C.primary, borderWidth: 2 },
           ]}
           onPress={() => setSelectedDelivery(method)}
           activeOpacity={0.8}
@@ -118,69 +121,70 @@ export default function CartScreen() {
             <View
               style={[
                 styles.radio,
-                selectedDelivery.id === method.id && styles.radioActive,
+                { borderColor: C.border },
+                selectedDelivery.id === method.id && { borderColor: C.primary },
               ]}
             >
               {selectedDelivery.id === method.id && (
-                <View style={styles.radioDot} />
+                <View style={[styles.radioDot, { backgroundColor: C.primary }]} />
               )}
             </View>
             <View>
-              <Text style={styles.deliveryLabel}>{method.label}</Text>
-              <Text style={styles.deliveryDesc}>{method.description}</Text>
+              <Text style={[styles.deliveryLabel, { color: C.text }]}>{method.label}</Text>
+              <Text style={[styles.deliveryDesc, { color: C.textSecondary }]}>{method.description}</Text>
             </View>
           </View>
-          <Text style={styles.deliveryPrice}>
+          <Text style={[styles.deliveryPrice, { color: C.text }]}>
             {method.price === 0 ? 'Free' : `$${method.price.toFixed(2)}`}
           </Text>
         </TouchableOpacity>
       ))}
 
       {/* Order Summary */}
-      <View style={styles.summaryBox}>
-        <Text style={styles.sectionLabel}>ORDER SUMMARY</Text>
+      <View style={[styles.summaryBox, { backgroundColor: C.card, borderColor: C.border }]}>
+        <Text style={[styles.sectionLabel, { color: C.textSecondary }]}>ORDER SUMMARY</Text>
         <View style={styles.summaryRow}>
-          <Text style={styles.summaryLabel}>
+          <Text style={[styles.summaryLabel, { color: C.textSecondary }]}>
             Subtotal ({totalItems()} items)
           </Text>
-          <Text style={styles.summaryValue}>${subtotal.toFixed(2)}</Text>
+          <Text style={[styles.summaryValue, { color: C.text }]}>${subtotal.toFixed(2)}</Text>
         </View>
         <View style={styles.summaryRow}>
-          <Text style={styles.summaryLabel}>Delivery</Text>
-          <Text style={styles.summaryValue}>
+          <Text style={[styles.summaryLabel, { color: C.textSecondary }]}>Delivery</Text>
+          <Text style={[styles.summaryValue, { color: C.text }]}>
             {delivery === 0 ? 'Free' : `$${delivery.toFixed(2)}`}
           </Text>
         </View>
-        <View style={[styles.summaryRow, styles.summaryTotal]}>
-          <Text style={styles.totalLabel}>Total</Text>
-          <Text style={styles.totalValue}>${total.toFixed(2)}</Text>
+        <View style={[styles.summaryRow, styles.summaryTotal, { borderTopColor: C.border }]}>
+          <Text style={[styles.totalLabel, { color: C.text }]}>Total</Text>
+          <Text style={[styles.totalValue, { color: C.text }]}>${total.toFixed(2)}</Text>
         </View>
       </View>
 
       {/* Looking for more */}
-      <View style={styles.lookingMore}>
-        <Text style={styles.lookingIcon}>♡</Text>
-        <Text style={styles.lookingTitle}>Looking for more?</Text>
-        <Text style={styles.lookingSubtitle}>
+      <View style={[styles.lookingMore, { backgroundColor: C.card, borderColor: C.border }]}>
+        <Text style={[styles.lookingIcon, { color: C.textSecondary }]}>♡</Text>
+        <Text style={[styles.lookingTitle, { color: C.text }]}>Looking for more?</Text>
+        <Text style={[styles.lookingSubtitle, { color: C.textSecondary }]}>
           Explore items from your wishlist or our latest premium arrivals.
         </Text>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.continueLink}>CONTINUE SHOPPING</Text>
+          <Text style={[styles.continueLink, { color: C.text }]}>CONTINUE SHOPPING</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: C.background }]}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: C.surface, borderBottomColor: C.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backText}>←</Text>
+          <Text style={[styles.backText, { color: C.text }]}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>YOUR CART</Text>
+        <Text style={[styles.headerTitle, { color: C.text }]}>YOUR CART</Text>
         <TouchableOpacity onPress={clearCart}>
-          <Text style={styles.clearText}>CLEAR</Text>
+          <Text style={[styles.clearText, { color: C.textSecondary }]}>CLEAR</Text>
         </TouchableOpacity>
       </View>
 
@@ -195,18 +199,18 @@ export default function CartScreen() {
       />
 
       {/* Checkout Button */}
-      <View style={styles.checkoutBar}>
+      <View style={[styles.checkoutBar, { backgroundColor: C.surface, borderTopColor: C.border }]}>
         <View>
-          <Text style={styles.checkoutTotalLabel}>TOTAL</Text>
-          <Text style={styles.checkoutTotal}>${total.toFixed(2)}</Text>
+          <Text style={[styles.checkoutTotalLabel, { color: C.textLight }]}>TOTAL</Text>
+          <Text style={[styles.checkoutTotal, { color: C.text }]}>${total.toFixed(2)}</Text>
         </View>
         <Animated.View style={{ transform: [{ scale: btnScale }], flex: 1 }}>
           <TouchableOpacity
-            style={styles.checkoutBtn}
+            style={[styles.checkoutBtn, { backgroundColor: C.primary }]}
             onPress={handleCheckoutPress}
             activeOpacity={0.9}
           >
-            <Text style={styles.checkoutBtnText}>
+            <Text style={[styles.checkoutBtnText, { color: C.textInverse }]}>
               CHECKOUT ({totalItems()})
             </Text>
           </TouchableOpacity>
@@ -217,28 +221,24 @@ export default function CartScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: COLORS.offWhite },
+  safe: { flex: 1 },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
-    backgroundColor: COLORS.white,
     borderBottomWidth: 0.5,
-    borderBottomColor: COLORS.border,
   },
-  backText: { fontSize: 24, color: COLORS.textPrimary, width: 40 },
+  backText: { fontSize: 24, width: 40 },
   headerTitle: {
     fontSize: 13,
     fontWeight: '700',
     letterSpacing: 3,
-    color: COLORS.textPrimary,
   },
   clearText: {
     fontSize: 11,
     letterSpacing: 1,
-    color: COLORS.textSecondary,
     fontWeight: '600',
     width: 40,
     textAlign: 'right',
@@ -246,7 +246,6 @@ const styles = StyleSheet.create({
   listContent: { paddingTop: SPACING.md, paddingBottom: 120 },
   subTitle: {
     fontSize: 13,
-    color: COLORS.textSecondary,
     paddingHorizontal: SPACING.md,
     marginBottom: SPACING.md,
   },
@@ -255,7 +254,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     letterSpacing: 2,
     fontWeight: '700',
-    color: COLORS.textSecondary,
     marginBottom: SPACING.sm,
     marginTop: SPACING.md,
   },
@@ -264,15 +262,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: SPACING.md,
-    backgroundColor: COLORS.white,
     borderRadius: RADIUS.md,
     borderWidth: 1.5,
-    borderColor: COLORS.border,
     marginBottom: SPACING.sm,
-  },
-  deliveryOptionActive: {
-    borderColor: COLORS.primary,
-    backgroundColor: COLORS.white,
   },
   deliveryLeft: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm },
   radio: {
@@ -280,59 +272,50 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 10,
     borderWidth: 1.5,
-    borderColor: COLORS.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  radioActive: { borderColor: COLORS.primary },
   radioDot: {
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: COLORS.primary,
   },
-  deliveryLabel: { fontSize: 14, fontWeight: '600', color: COLORS.textPrimary },
-  deliveryDesc: { fontSize: 12, color: COLORS.textSecondary, marginTop: 2 },
-  deliveryPrice: { fontSize: 14, fontWeight: '600', color: COLORS.textPrimary },
+  deliveryLabel: { fontSize: 14, fontWeight: '600' },
+  deliveryDesc: { fontSize: 12, marginTop: 2 },
+  deliveryPrice: { fontSize: 14, fontWeight: '600' },
   summaryBox: {
-    backgroundColor: COLORS.white,
     borderRadius: RADIUS.md,
     padding: SPACING.md,
     marginTop: SPACING.sm,
     gap: SPACING.sm,
     borderWidth: 0.5,
-    borderColor: COLORS.border,
   },
   summaryRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  summaryLabel: { fontSize: 14, color: COLORS.textSecondary },
-  summaryValue: { fontSize: 14, color: COLORS.textPrimary, fontWeight: '500' },
+  summaryLabel: { fontSize: 14 },
+  summaryValue: { fontSize: 14, fontWeight: '500' },
   summaryTotal: {
     borderTopWidth: 0.5,
-    borderTopColor: COLORS.border,
     paddingTop: SPACING.sm,
     marginTop: SPACING.xs,
   },
-  totalLabel: { fontSize: 16, fontWeight: '700', color: COLORS.textPrimary },
-  totalValue: { fontSize: 20, fontWeight: '700', color: COLORS.textPrimary },
+  totalLabel: { fontSize: 16, fontWeight: '700' },
+  totalValue: { fontSize: 20, fontWeight: '700' },
   lookingMore: {
-    backgroundColor: COLORS.white,
     borderRadius: RADIUS.md,
     padding: SPACING.lg,
     marginTop: SPACING.sm,
     alignItems: 'center',
     gap: SPACING.xs,
     borderWidth: 0.5,
-    borderColor: COLORS.border,
   },
   lookingIcon: { fontSize: 28, marginBottom: SPACING.xs },
-  lookingTitle: { fontSize: 16, fontWeight: '700', color: COLORS.textPrimary },
+  lookingTitle: { fontSize: 16, fontWeight: '700' },
   lookingSubtitle: {
     fontSize: 13,
-    color: COLORS.textSecondary,
     textAlign: 'center',
     lineHeight: 20,
   },
@@ -340,7 +323,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     letterSpacing: 2,
     fontWeight: '700',
-    color: COLORS.textPrimary,
     marginTop: SPACING.sm,
     textDecorationLine: 'underline',
   },
@@ -353,20 +335,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: SPACING.md,
     padding: SPACING.md,
-    backgroundColor: COLORS.white,
     borderTopWidth: 0.5,
-    borderTopColor: COLORS.border,
     paddingBottom: SPACING.lg,
   },
   checkoutTotalLabel: {
     fontSize: 10,
     letterSpacing: 2,
-    color: COLORS.textLight,
     fontWeight: '600',
   },
-  checkoutTotal: { fontSize: 20, fontWeight: '700', color: COLORS.textPrimary },
+  checkoutTotal: { fontSize: 20, fontWeight: '700' },
   checkoutBtn: {
-    backgroundColor: COLORS.primary,
     height: 52,
     borderRadius: RADIUS.md,
     alignItems: 'center',
@@ -374,7 +352,6 @@ const styles = StyleSheet.create({
     marginLeft: SPACING.sm,
   },
   checkoutBtnText: {
-    color: COLORS.white,
     fontWeight: '700',
     fontSize: 13,
     letterSpacing: 2,
@@ -387,12 +364,11 @@ const styles = StyleSheet.create({
     padding: SPACING.xl,
   },
   emptyIcon: { fontSize: 64, marginBottom: SPACING.md },
-  emptyTitle: { fontSize: 22, fontWeight: '700', color: COLORS.textPrimary },
-  emptySubtitle: { fontSize: 15, color: COLORS.textSecondary },
+  emptyTitle: { fontSize: 22, fontWeight: '700' },
+  emptySubtitle: { fontSize: 15 },
   shopBtn: {
     marginTop: SPACING.md,
     borderWidth: 1.5,
-    borderColor: COLORS.primary,
     paddingVertical: 14,
     paddingHorizontal: SPACING.xl,
     borderRadius: RADIUS.md,
@@ -401,6 +377,5 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
     letterSpacing: 2,
-    color: COLORS.textPrimary,
   },
 });
