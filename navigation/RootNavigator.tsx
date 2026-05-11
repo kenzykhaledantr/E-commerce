@@ -21,23 +21,11 @@ function MainApp() {
 // src/navigation/RootNavigator.tsx
 export default function RootNavigator() {
   const { isAuthenticated, isLoading, setUser, setLoading } = useAuthStore();
-   const { hydrated }                   = useThemeStore();
+  const { hydrated } = useThemeStore();
   const { colors, isDark } = useTheme();
-  
-  if (isLoading || !hydrated) {
-    return (
-      <View style={{
-        flex: 1,
-        backgroundColor: colors.background,
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}>
-        <ActivityIndicator size="large" color={colors.accent} />
-      </View>
-    );
-  }
 
   // Check for existing user session on app start
+  // NOTE: This must be above any early returns to satisfy Rules of Hooks
   useEffect(() => {
     const checkExistingSession = async () => {
       try {
@@ -59,13 +47,17 @@ export default function RootNavigator() {
     checkExistingSession();
   }, [setUser, setLoading]);
 
-  // Add this log:
   console.log('📱 Navigator render:', { isLoading, isAuthenticated });
 
-  if (isLoading) {
+  if (isLoading || !hydrated) {
     return (
-      <View style={styles.loading}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
+      <View style={{
+        flex: 1,
+        backgroundColor: colors.background,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <ActivityIndicator size="large" color={colors.accent} />
       </View>
     );
   }
@@ -74,7 +66,7 @@ export default function RootNavigator() {
     <NavigationContainer>
       <StatusBar style={isDark ? 'light' : 'dark'} />
       <OfflineBanner />
-       {isAuthenticated ? <MainApp /> : <AuthNavigator />}
+      {isAuthenticated ? <MainApp /> : <AuthNavigator />}
     </NavigationContainer>
   );
 }

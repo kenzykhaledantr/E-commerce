@@ -52,3 +52,12 @@ export const useCreateOrder = () => {
     },
   });
 };
+
+export const useUserOrders = () => {
+  const user = useAuthStore((s) => s.user);
+  return useQuery({
+    queryKey: ['orders', user?.uid],
+    queryFn:  () => getUserOrders(user!.uid),
+    enabled:  !!user,
+  });
+};

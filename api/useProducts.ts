@@ -41,4 +41,5 @@ export const useProductsByCategory = (category: ProductCategory) =>
     queryKey: productKeys.byCategory(category),
     queryFn: () => getProductsByCategory(category),
     enabled: !!category,
+    retry: 1,
   });

@@ -8,17 +8,18 @@ import {
   Dimensions,
   Platform,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING } from '../utils/constants';
 
 const { width } = Dimensions.get('window');
 const TAB_COUNT = 4;
 const TAB_WIDTH = width / TAB_COUNT;
 
-const TABS = [
-  { key: 'Home',       label: 'HOME',       icon: '⌂' },
-  { key: 'Categories', label: 'CATEGORIES', icon: '⊞' },
-  { key: 'Saved',      label: 'SAVED',      icon: '♡' },
-  { key: 'Profile',    label: 'PROFILE',    icon: '◎' },
+const TABS: { key: string; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
+  { key: 'Home',       label: 'HOME',       icon: 'home-outline' },
+  { key: 'Categories', label: 'CATEGORIES', icon: 'grid-outline' },
+  { key: 'Saved',      label: 'SAVED',      icon: 'heart-outline' },
+  { key: 'Profile',    label: 'PROFILE',    icon: 'person-outline' },
 ];
 
 interface AnimatedTabBarProps {
@@ -68,14 +69,11 @@ export default function AnimatedTabBar({
             onPress={onPress}
             activeOpacity={0.8}
           >
-            <Text
-              style={[
-                styles.tabIcon,
-                isFocused && styles.tabIconActive,
-              ]}
-            >
-              {tab.icon}
-            </Text>
+            <Ionicons
+              name={tab.icon}
+              size={20}
+              color={isFocused ? COLORS.textPrimary : COLORS.textLight}
+            />
             <Text
               style={[
                 styles.tabLabel,

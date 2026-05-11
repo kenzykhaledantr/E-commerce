@@ -11,7 +11,8 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation }   from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore }    from '../../../store/authStore';
 import { useTheme }        from '../../../hook/useTheme';
 import { updateDisplayName, changePassword } from '../../../services/authService';
@@ -121,7 +122,7 @@ export default function AccountSettingsScreen() {
         borderBottomColor: C.border,
       }]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={[styles.backText, { color: C.text }]}>←</Text>
+          <Ionicons name="arrow-back" size={24} color={C.text} style={{ width: 40 }} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: C.text }]}>
           ACCOUNT SETTINGS
@@ -164,9 +165,11 @@ export default function AccountSettingsScreen() {
             <View style={styles.settingRow}>
               <View style={styles.settingLeft}>
                 <View style={[styles.settingIcon, { backgroundColor: isDark ? '#1a1a2e' : C.background }]}>
-                  <Text style={styles.settingEmoji}>
-                    {isDark ? '🌙' : '☀️'}
-                  </Text>
+                  <Ionicons
+                    name={isDark ? 'moon-outline' : 'sunny-outline'}
+                    size={20}
+                    color={C.text}
+                  />
                 </View>
                 <View>
                   <Text style={[styles.settingTitle, { color: C.text }]}>
@@ -201,7 +204,7 @@ export default function AccountSettingsScreen() {
             >
               <View style={styles.settingLeft}>
                 <View style={[styles.settingIcon, { backgroundColor: C.background }]}>
-                  <Text style={styles.settingEmoji}>✏️</Text>
+                  <Ionicons name="create-outline" size={20} color={C.text} />
                 </View>
                 <View>
                   <Text style={[styles.settingTitle, { color: C.text }]}>
@@ -212,10 +215,11 @@ export default function AccountSettingsScreen() {
                   </Text>
                 </View>
               </View>
-              <Text style={[styles.chevron, {
-                color: C.textLight,
-                transform: [{ rotate: expanded === 'name' ? '90deg' : '0deg' }],
-              }]}>›</Text>
+              <Ionicons
+                name={expanded === 'name' ? 'chevron-down' : 'chevron-forward'}
+                size={18}
+                color={C.textLight}
+              />
             </TouchableOpacity>
 
             {/* Name form — expands inline */}
@@ -255,7 +259,7 @@ export default function AccountSettingsScreen() {
             >
               <View style={styles.settingLeft}>
                 <View style={[styles.settingIcon, { backgroundColor: C.background }]}>
-                  <Text style={styles.settingEmoji}>🔑</Text>
+                  <Ionicons name="key-outline" size={20} color={C.text} />
                 </View>
                 <View>
                   <Text style={[styles.settingTitle, { color: C.text }]}>
@@ -266,10 +270,11 @@ export default function AccountSettingsScreen() {
                   </Text>
                 </View>
               </View>
-              <Text style={[styles.chevron, {
-                color: C.textLight,
-                transform: [{ rotate: expanded === 'password' ? '90deg' : '0deg' }],
-              }]}>›</Text>
+              <Ionicons
+                name={expanded === 'password' ? 'chevron-down' : 'chevron-forward'}
+                size={18}
+                color={C.textLight}
+              />
             </TouchableOpacity>
 
             {/* Password form — expands inline */}
@@ -319,15 +324,15 @@ export default function AccountSettingsScreen() {
           <Text style={[styles.groupLabel, labelStyle]}>INFORMATION</Text>
           <View style={[styles.card, sectionCard]}>
             {[
-              { label: 'Email',   value: user?.email ?? '—', emoji: '📧' },
-              { label: 'Member Since', value: '2024', emoji: '🏆' },
-              { label: 'App Version',  value: '1.0.0', emoji: 'ℹ️' },
+              { label: 'Email',   value: user?.email ?? '—', iconName: 'mail-outline' as const },
+              { label: 'Member Since', value: '2024', iconName: 'trophy-outline' as const },
+              { label: 'App Version',  value: '1.0.0', iconName: 'information-circle-outline' as const },
             ].map((item, i, arr) => (
               <View key={item.label}>
                 <View style={styles.infoRow}>
                   <View style={styles.settingLeft}>
                     <View style={[styles.settingIcon, { backgroundColor: C.background }]}>
-                      <Text style={styles.settingEmoji}>{item.emoji}</Text>
+                      <Ionicons name={item.iconName} size={20} color={C.text} />
                     </View>
                     <Text style={[styles.settingTitle, { color: C.text }]}>
                       {item.label}
@@ -359,7 +364,6 @@ const styles = StyleSheet.create({
     paddingVertical:   SPACING.sm,
     borderBottomWidth: 0.5,
   },
-  backText:    { fontSize: 24, width: 40 },
   headerTitle: { fontSize: 12, fontWeight: '700', letterSpacing: 3 },
   content: {
     padding:       SPACING.md,
@@ -423,10 +427,8 @@ const styles = StyleSheet.create({
     alignItems:     'center',
     justifyContent: 'center',
   },
-  settingEmoji: { fontSize: 20 },
   settingTitle: { fontSize: 15, fontWeight: '600' },
   settingDesc:  { fontSize: 12, marginTop: 2 },
-  chevron:      { fontSize: 22, fontWeight: '300' },
   divider:      { height: 0.5, marginLeft: SPACING.md + 40 + SPACING.sm },
 
   // Expanded form

@@ -7,6 +7,8 @@ import MainNavigator from './MainNavigator';
 import SavedAddressesScreen from '../src/screens/main/SavedAddressesScreen';
 import PaymentMethodsScreen from '../src/screens/main/PaymentMethodsScreen';
 import AccountSettingsScreen from '../src/screens/main/AccountSettingsScreen';
+import MyOrdersScreen from '../src/screens/main/MyOrdersScreen';
+import OrderDetailScreen from '../src/screens/main/OrderDetailScreen';
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
@@ -36,6 +38,17 @@ export default function AppNavigator() {
       <Stack.Screen
   name="AccountSettings"
   component={AccountSettingsScreen}
+  options={{ headerShown: false, animation: 'slide_from_right' }}
+      />
+      
+      <Stack.Screen
+  name="MyOrders"
+  component={MyOrdersScreen}
+  options={{ headerShown: false, animation: 'slide_from_right' }}
+/>
+<Stack.Screen
+  name="OrderDetail"
+  component={OrderDetailScreen}
   options={{ headerShown: false, animation: 'slide_from_right' }}
 />
     </Stack.Navigator>

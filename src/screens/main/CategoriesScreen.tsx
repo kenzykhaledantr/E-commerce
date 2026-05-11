@@ -1,5 +1,6 @@
 // src/screens/main/CategoriesScreen.tsx
 import React, { useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
 import {
   View,
   Text,
@@ -21,13 +22,13 @@ import { useTheme } from '../../../hook/useTheme';
 
 const { width } = Dimensions.get('window');
 
-const CATEGORIES: { key: ProductCategory; label: string; emoji: string; color: string }[] = [
-  { key: 'handbags',    label: 'Handbags',     emoji: '👜', color: '#F5E6D3' },
-  { key: 'clothing',   label: 'Clothing',     emoji: '👕', color: '#D3E4F5' },
-  { key: 'electronics',label: 'Electronics',  emoji: '🎧', color: '#D3F5E4' },
-  { key: 'footwear',   label: 'Footwear',     emoji: '👟', color: '#F5D3D3' },
-  { key: 'watches',    label: 'Watches',      emoji: '⌚', color: '#E4D3F5' },
-  { key: 'accessories',label: 'Accessories',  emoji: '💍', color: '#F5F5D3' },
+const CATEGORIES: { key: ProductCategory; label: string; icon: keyof typeof Ionicons.glyphMap; color: string }[] = [
+  { key: 'handbags',    label: 'Handbags',     icon: 'bag-handle-outline',   color: '#F5E6D3' },
+  { key: 'clothing',   label: 'Clothing',     icon: 'shirt-outline',        color: '#D3E4F5' },
+  { key: 'electronics',label: 'Electronics',  icon: 'headset-outline',      color: '#D3F5E4' },
+  { key: 'footwear',   label: 'Footwear',     icon: 'footsteps-outline',    color: '#F5D3D3' },
+  { key: 'watches',    label: 'Watches',      icon: 'watch-outline',        color: '#E4D3F5' },
+  { key: 'accessories',label: 'Accessories',  icon: 'diamond-outline',      color: '#F5F5D3' },
 ];
 
 export default function CategoriesScreen() {
@@ -64,7 +65,7 @@ const { colors: C } = useTheme();
                   onPress={() => setSelected(cat.key)}
                   activeOpacity={0.8}
                 >
-                  <Text style={styles.chipEmoji}>{cat.emoji}</Text>
+                  <Ionicons name={cat.icon} size={16} color={COLORS.textSecondary} />
                   <Text
                     style={[
                       styles.chipLabel,

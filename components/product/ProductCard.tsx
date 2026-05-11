@@ -8,6 +8,7 @@ import {
   Dimensions,
   Image,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { SPACING, RADIUS } from '../../utils/constants';
 import { useTheme } from '../../hook/useTheme';
 import type { Product } from '../../types';
@@ -87,12 +88,11 @@ interface ProductCardProps {
             onPress={onFavorite}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <Text style={[
-              styles.favoriteIcon,
-              { color: isFavorite ? '#E63946' : C.textLight },
-            ]}>
-              {isFavorite ? '♥' : '♡'}
-            </Text>
+            <Ionicons
+              name={isFavorite ? 'heart' : 'heart-outline'}
+              size={16}
+              color={isFavorite ? '#E63946' : C.textLight}
+            />
           </TouchableOpacity>
         </View>
 
@@ -104,7 +104,7 @@ interface ProductCardProps {
             {product.name}
           </Text>
           <View style={styles.ratingRow}>
-            <Text style={styles.star}>★</Text>
+            <Ionicons name="star" size={11} color="#F4A261" />
             <Text style={[styles.rating, { color: C.textSecondary }]}>{product.rating.toFixed(1)}</Text>
           </View>
           <View style={styles.priceRow}>

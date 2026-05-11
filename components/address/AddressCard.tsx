@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { SPACING, RADIUS } from '../../utils/constants';
 import { useTheme } from '../../hook/useTheme';
+import { Ionicons } from '@expo/vector-icons';
 import type { Address } from '../../types';
 
 interface AddressCardProps {
@@ -55,10 +56,10 @@ export default function AddressCard({
     );
   };
 
-  const LABEL_ICONS: Record<string, string> = {
-    Home:   '🏠',
-    Office: '🏢',
-    Other:  '📍',
+  const LABEL_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
+    Home:   'home-outline',
+    Office: 'business-outline',
+    Other:  'location-outline',
   };
 
   return (
@@ -77,9 +78,7 @@ export default function AddressCard({
         {/* Top row */}
         <View style={styles.topRow}>
           <View style={styles.labelRow}>
-            <Text style={styles.labelIcon}>
-              {LABEL_ICONS[address.label] ?? '📍'}
-            </Text>
+            <Ionicons name={LABEL_ICONS[address.label] ?? 'location-outline'} size={16} color={C.textSecondary} />
             <Text style={[styles.label, { color: C.textSecondary }]}>{address.label.toUpperCase()}</Text>
             {address.isDefault && (
               <View style={[styles.defaultBadge, { backgroundColor: C.accent }]}>
@@ -95,14 +94,14 @@ export default function AddressCard({
               onPress={onEdit}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
-              <Text style={[styles.actionText, { color: C.textSecondary }]}>✎</Text>
+              <Ionicons name="pencil-outline" size={15} color={C.textSecondary} />
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.actionBtn, { backgroundColor: C.skeletonBase }]}
               onPress={handleDelete}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
-              <Text style={[styles.actionText, styles.deleteText, { color: C.textSecondary }]}>🗑</Text>
+              <Ionicons name="trash-outline" size={15} color={C.textSecondary} />
             </TouchableOpacity>
           </View>
         </View>
