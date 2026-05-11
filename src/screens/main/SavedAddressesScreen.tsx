@@ -1,5 +1,7 @@
 // src/screens/main/SavedAddressesScreen.tsx
+
 import React, { useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
 import {
   View,
   Text,
@@ -85,7 +87,7 @@ const handleSave = async (formData: Omit<Address, 'id'>) => {
           onPress={() => navigation.goBack()}
           style={styles.backBtn}
         >
-          <Text style={[styles.backText, { color: C.text }]}>←</Text>
+          <Ionicons name="arrow-back" size={24} color={C.text} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: C.text }]}>SAVED ADDRESSES</Text>
         <TouchableOpacity
@@ -111,7 +113,7 @@ const handleSave = async (formData: Omit<Address, 'id'>) => {
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Text style={styles.emptyIcon}>📍</Text>
+              <Ionicons name="location-outline" size={56} color={COLORS.textSecondary} />
               <Text style={styles.emptyTitle}>No saved addresses</Text>
               <Text style={styles.emptySubtitle}>
                 Add an address for faster checkout
@@ -138,7 +140,7 @@ const handleSave = async (formData: Omit<Address, 'id'>) => {
                 style={styles.addNewBtn}
                 onPress={handleAddNew}
               >
-                <Text style={styles.addNewIcon}>+</Text>
+                <Ionicons name="add-circle-outline" size={22} color={COLORS.textSecondary} />
                 <Text style={styles.addNewText}>Add New Address</Text>
               </TouchableOpacity>
             ) : null

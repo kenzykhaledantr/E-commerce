@@ -27,7 +27,9 @@ export type AppStackParamList = {
   MainTabs:       undefined;          // the bottom tabs
   SavedAddresses: undefined;
   PaymentMethods: undefined;
-  AccountSettings: undefined; // ← moved here
+  AccountSettings: undefined;
+  MyOrders:        undefined;           // ← add
+  OrderDetail:     { orderId: string }// ← moved here
   // add more shared screens here as needed
 };
 

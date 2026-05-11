@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Image,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, RADIUS } from '../../utils/constants';
 import type { ProductCategory } from '../../types';
 import * as Haptics from 'expo-haptics';
@@ -16,17 +17,17 @@ import { useTheme } from '../../hook/useTheme';
 interface Category {
   key: ProductCategory | 'all';
   label: string;
-  emoji: string;
+  icon: keyof typeof Ionicons.glyphMap;
 }
 
 const CATEGORIES: Category[] = [
-  { key: 'all', label: 'All', emoji: '✦' },
-  { key: 'handbags', label: 'Bags', emoji: '👜' },
-  { key: 'clothing', label: 'Clothes', emoji: '👕' },
-  { key: 'electronics', label: 'Tech', emoji: '🎧' },
-  { key: 'footwear', label: 'Shoes', emoji: '👟' },
-  { key: 'watches', label: 'Watches', emoji: '⌚' },
-  { key: 'accessories', label: 'Accessories', emoji: '💍' },
+  { key: 'all', label: 'All', icon: 'grid-outline' },
+  { key: 'handbags', label: 'Bags', icon: 'bag-outline' },
+  { key: 'clothing', label: 'Clothes', icon: 'shirt-outline' },
+  { key: 'electronics', label: 'Tech', icon: 'headset-outline' },
+  { key: 'footwear', label: 'Shoes', icon: 'footsteps-outline' },
+  { key: 'watches', label: 'Watches', icon: 'watch-outline' },
+  { key: 'accessories', label: 'Accessories', icon: 'diamond-outline' },
 ];
 
 interface CategoryStripProps {
@@ -71,7 +72,11 @@ export default function CategoryStrip({
                   isActive && styles.emojiContainerActive,
                 ]}
               >
-                <Text style={styles.emoji}>{cat.emoji}</Text>
+                <Ionicons
+                  name={cat.icon}
+                  size={26}
+                  color={isActive ? COLORS.white : COLORS.textPrimary}
+                />
               </View>
               <Text
                 style={[styles.label, isActive && styles.labelActive]}

@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import { useCartStore } from '../../../store/cartStore';
 import { useAuthStore } from '../../../store/authStore';
 import { useCreateOrder } from '../../../api/useOrders';
@@ -43,8 +44,8 @@ const DELIVERY_OPTIONS = [
 ];
 
 const PAYMENT_OPTIONS = [
-  { id: 'card',   label: 'Credit or Debit Card', icon: '💳' },
-  { id: 'paypal', label: 'PayPal',                icon: '🅿' },
+  { id: 'card',   label: 'Credit or Debit Card', icon: 'card-outline' as const },
+  { id: 'paypal', label: 'PayPal',                icon: 'logo-paypal' as const },
 ];
 
 export default function CheckoutScreen() {
@@ -117,7 +118,7 @@ export default function CheckoutScreen() {
               i < step  && { backgroundColor: C.primary, borderColor: C.primary },
             ]}>
               {i < step ? (
-                <Text style={[styles.stepCheckmark, { color: C.textInverse }]}>✓</Text>
+                <Ionicons name="checkmark" size={18} color={C.textInverse} />
               ) : (
                 <Text style={[
                   styles.stepNumber,
@@ -170,7 +171,7 @@ export default function CheckoutScreen() {
         <View style={styles.stepContent}>
           <Text style={[styles.sectionTitle, { color: C.text }]}>Shipping Address</Text>
           <View style={[styles.emptyAddressBox, { backgroundColor: C.card, borderColor: C.border }]}>
-            <Text style={[styles.emptyAddressIcon, { color: C.textSecondary }]}>📍</Text>
+            <Ionicons name="location-outline" size={40} color={C.textSecondary} />
             <Text style={[styles.emptyAddressTitle, { color: C.text }]}>No saved addresses</Text>
             <Text style={[styles.emptyAddressSub, { color: C.textSecondary }]}>
               Add a delivery address to continue
@@ -227,8 +228,14 @@ export default function CheckoutScreen() {
               <View style={styles.addressInfo}>
                 <View style={styles.addressLabelRow}>
                   <Text style={[styles.addressLabel, { color: C.textSecondary }]}>
-                    {address.label === 'Home'   ? '🏠' :
-                     address.label === 'Office' ? '🏢' : '📍'}
+                    <Ionicons
+                      name={
+                        address.label === 'Home' ? 'home-outline' :
+                        address.label === 'Office' ? 'business-outline' : 'location-outline'
+                      }
+                      size={11}
+                      color={C.textSecondary}
+                    />
                     {'  '}
                     {address.label.toUpperCase()}
                   </Text>
@@ -364,7 +371,7 @@ export default function CheckoutScreen() {
               )}
             </View>
             <Text style={[styles.optionTitle, { color: C.text }]}>
-              {opt.icon}{'  '}{opt.label}
+              <Ionicons name={opt.icon} size={15} color={C.text} />{'  '}{opt.label}
             </Text>
           </View>
         </TouchableOpacity>
@@ -377,7 +384,9 @@ export default function CheckoutScreen() {
         {/* Delivery address */}
         {selectedAddress && (
           <View style={styles.summaryAddressRow}>
-            <Text style={[styles.summaryAddressLabel, { color: C.textSecondary }]}>📍 Ship to</Text>
+            <Text style={[styles.summaryAddressLabel, { color: C.textSecondary }]}>
+              <Ionicons name="location-outline" size={13} color={C.textSecondary} /> Ship to
+            </Text>
             <Text style={[styles.summaryAddressValue, { color: C.text }]} numberOfLines={1}>
               {selectedAddress.street}, {selectedAddress.city}
             </Text>
@@ -440,8 +449,8 @@ export default function CheckoutScreen() {
     <SafeAreaView style={[styles.safe, { backgroundColor: C.background }]}>
       {/* Header */}
       <View style={[styles.header, { backgroundColor: C.surface, borderBottomColor: C.border }]}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={[styles.headerBack, { color: C.text }]}>←</Text>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40 }}>
+          <Ionicons name="arrow-back" size={24} color={C.text} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: C.text }]}>CHECKOUT</Text>
         <View style={{ width: 40 }} />

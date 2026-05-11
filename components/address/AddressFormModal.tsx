@@ -13,6 +13,7 @@ import {
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import FormInput from '../common/FormInput';
 import { SPACING, RADIUS } from '../../utils/constants';
 import { useTheme } from '../../hook/useTheme';
@@ -149,8 +150,12 @@ export default function AddressFormModal({
                         form.label === opt && { color: C.textInverse },
                       ]}
                     >
-                      {opt === 'Home'   ? '🏠 Home'   :
-                       opt === 'Office' ? '🏢 Office' : '📍 Other'}
+                      <Ionicons
+                        name={opt === 'Home' ? 'home-outline' : opt === 'Office' ? 'business-outline' : 'location-outline'}
+                        size={13}
+                      />
+                      {' '}
+                      {opt}
                     </Text>
                   </TouchableOpacity>
                 ))}

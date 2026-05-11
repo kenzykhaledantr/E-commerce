@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING } from '../../utils/constants';
 import { useTheme } from '../../hook/useTheme';
 
@@ -33,10 +34,10 @@ export default function SectionHeader({
         {showArrows && (
           <>
             <TouchableOpacity style={[styles.arrowBtn, { backgroundColor: C.background }]} onPress={onPrev}>
-              <Text style={[styles.arrow,{color:C.text}]}>‹</Text>
+              <Ionicons name="chevron-back" size={16} color={C.text} />
             </TouchableOpacity>
             <TouchableOpacity style={[styles.arrowBtn, { backgroundColor: C.background }]} onPress={onNext}>
-              <Text style={[styles.arrow,{color:C.text}]}>›</Text>
+              <Ionicons name="chevron-forward" size={16} color={C.text} />
             </TouchableOpacity>
           </>
         )}

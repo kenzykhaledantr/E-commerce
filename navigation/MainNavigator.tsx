@@ -2,6 +2,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text, StyleSheet, Platform } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import type { MainTabParamList } from '../types/navigation';
 import { COLORS } from '../utils/constants';
 import { useTheme } from '../hook/useTheme';
@@ -17,19 +18,17 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 // Tab icon labels with active/inactive styles
 function TabIcon({
   label,
-  symbol,
+  iconName,
   focused,
 }: {
   label: string;
-  symbol: string;
+  iconName: keyof typeof Ionicons.glyphMap;
   focused: boolean;
 }) {
   const { colors: C } = useTheme();
   return (
     <View style={styles.tabItem}>
-      <Text style={[styles.tabSymbol, { color: focused ? C.text : C.textLight }]}>
-        {symbol}
-      </Text>
+      <Ionicons name={iconName} size={20} color={focused ? C.text : C.textLight} />
       <Text style={[styles.tabLabel, { color: focused ? C.text : C.textLight, fontWeight: focused ? '700' : '200' }]}>
         {label}
       </Text>
@@ -61,7 +60,7 @@ export default function MainNavigator() {
         component={HomeNavigator}
         options={{
           tabBarIcon: ({ focused }) => (
-            <TabIcon label="HOME" symbol="⌂" focused={focused} />
+            <TabIcon label="HOME" iconName="home-outline" focused={focused} />
           ),
         }}
       />
@@ -70,7 +69,7 @@ export default function MainNavigator() {
         component={CategoriesScreen}
         options={{
           tabBarIcon: ({ focused }) => (
-            <TabIcon label="CATEGORIES" symbol="⊞" focused={focused} />
+            <TabIcon label="CATEGORIES" iconName="grid-outline" focused={focused} />
           ),
         }}
       />
@@ -79,7 +78,7 @@ export default function MainNavigator() {
         component={SavedScreen}
         options={{
           tabBarIcon: ({ focused }) => (
-            <TabIcon label="SAVED" symbol="♡" focused={focused} />
+            <TabIcon label="SAVED" iconName="heart-outline" focused={focused} />
           ),
         }}
       />
@@ -88,7 +87,7 @@ export default function MainNavigator() {
         component={ProfileScreen}
         options={{
           tabBarIcon: ({ focused }) => (
-            <TabIcon label="PROFILE" symbol="◎" focused={focused} />
+            <TabIcon label="PROFILE" iconName="person-outline" focused={focused} />
           ),
         }}
           />
@@ -100,13 +99,10 @@ export default function MainNavigator() {
 const styles = StyleSheet.create({
   tabItem: {
     alignItems: 'center',
-    gap: 5,
-  },
-  tabSymbol: {
-    fontSize: 20,
+    gap: 4,
   },
   tabLabel: {
     fontSize: 9,
-    letterSpacing: 0.3,
+    letterSpacing: 0.2,
   },
 });

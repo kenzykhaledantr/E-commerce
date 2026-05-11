@@ -157,28 +157,21 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 22, fontWeight: '700', color: COLORS.textPrimary },
   subtitle: { fontSize: 13, color: COLORS.textSecondary, marginTop: 2 },
-  testBtn: {
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.xs,
-    backgroundColor: COLORS.offWhite,
-    borderRadius: RADIUS.full,
-    borderWidth: 0.5,
-    borderColor: COLORS.border,
-  },
-  testBtnText: { fontSize: 12, color: COLORS.textSecondary },
+  
   grid: {
     paddingHorizontal: SPACING.md,
     paddingBottom: SPACING.xl,
   },
   columnWrapper: { gap: SPACING.sm, marginBottom: SPACING.sm },
-  cardWrapper: { flex: 1 },
+  cardWrapper: { width: (width - SPACING.md * 2 - SPACING.sm) / 2 },
   addBtn: {
     backgroundColor: COLORS.primary,
     paddingVertical: SPACING.sm,
     borderBottomLeftRadius: RADIUS.md,
     borderBottomRightRadius: RADIUS.md,
     alignItems: 'center',
-    marginTop: -RADIUS.md,
+    marginTop: -RADIUS.sm,
+   
   },
   addBtnText: {
     color: COLORS.white,

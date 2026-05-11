@@ -1,5 +1,6 @@
 // src/screens/main/ProductDetailScreen.tsx
 import React, { useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
 import {
   View,
   Text,
@@ -36,8 +37,10 @@ export default function ProductDetailScreen({
   const { toggle, isFavorite } = useFavoritesStore();
   const { colors: C } = useTheme();
   const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState<string>('');
   const { triggerAnimation, dotStyle } = useAddToCartAnimation();
-const { toast, showToast, hideToast } = useToast();
+  const { toast, showToast, hideToast } = useToast();
+
   if (isLoading || !product) {
     return (
       <View style={[styles.loading, { backgroundColor: C.background }]}>
@@ -46,19 +49,36 @@ const { toast, showToast, hideToast } = useToast();
     );
   }
 
+  // Size options for clothing and footwear
+  const getSizeOptions = () => {
+    if (product.category === 'clothing') {
+      return ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+    } else if (product.category === 'footwear') {
+      return ['36', '37', '38', '39', '40', '41', '42', '43', '44', '45'];
+    }
+    return [];
+  };
+
   const handleAddToCart = () => {
-  addItem(product, quantity);
-  showToast(`${product.name} added to cart`, 'success');
-};
+    const isSizeRequired = product.category === 'clothing' || product.category === 'footwear';
+    
+    if (isSizeRequired && !selectedSize) {
+      showToast('Please select a size', 'error');
+      return;
+    }
+    
+    addItem(product, quantity, selectedSize);
+    showToast(`${product.name} added to cart`, 'success');
+  };
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: C.background }]} edges={['bottom']}>
       <Toast
-      message={toast.message}
-      type={toast.type}
-      visible={toast.visible}
-      onHide={hideToast}
-    />
+        message={toast.message}
+        type={toast.type}
+        visible={toast.visible}
+        onHide={hideToast}
+      />
       <ScrollView
         style={styles.scroll}
         showsVerticalScrollIndicator={false}
@@ -76,7 +96,7 @@ const { toast, showToast, hideToast } = useToast();
             style={[styles.backBtn, { backgroundColor: C.surface }]}
             onPress={() => navigation.goBack()}
           >
-            <Text style={[styles.backIcon, { color: C.text }]}>←</Text>
+            <Ionicons name="arrow-back" size={22} color={C.text} />
           </TouchableOpacity>
 
           {/* Favorite */}
@@ -84,9 +104,11 @@ const { toast, showToast, hideToast } = useToast();
             style={[styles.favoriteBtn, { backgroundColor: C.surface }]}
             onPress={() => toggle(product.id)}
           >
-            <Text style={[styles.favoriteIcon, { color: isFavorite(product.id) ? C.accent : C.textSecondary }]}>
-              {isFavorite(product.id) ? '♥' : '♡'}
-            </Text>
+            <Ionicons
+              name={isFavorite(product.id) ? 'heart' : 'heart-outline'}
+              size={20}
+              color={isFavorite(product.id) ? C.accent : C.textSecondary}
+            />
           </TouchableOpacity>
         </View>
 
@@ -110,17 +132,12 @@ const { toast, showToast, hideToast } = useToast();
           {/* Rating */}
           <View style={styles.ratingRow}>
             {[1, 2, 3, 4, 5].map((i) => (
-              <Text
+              <Ionicons
                 key={i}
-                style={[
-                  styles.star,
-                  i <= Math.round(product.rating)
-                    ? styles.starFilled
-                    : styles.starEmpty,
-                ]}
-              >
-                ★
-              </Text>
+                name={i <= Math.round(product.rating) ? 'star' : 'star-outline'}
+                size={16}
+                color={i <= Math.round(product.rating) ? '#F4A261' : '#CCC'}
+              />
             ))}
             <Text style={[styles.reviewCount, { color: C.textSecondary }]}>
               ({product.reviewCount} reviews)
@@ -139,84 +156,120 @@ const { toast, showToast, hideToast } = useToast();
             ))}
           </View>
 
+          {/* Size Selection for Clothing and Footwear */}
+          {(product.category === 'clothing' || product.category === 'footwear') && (
+            <View style={styles.sizeSection}>
+              <Text style={[styles.sizeLabel, { color: C.textSecondary }]}>SIZE</Text>
+              <View style={styles.sizeOptions}>
+                {getSizeOptions().map((size) => (
+                  <TouchableOpacity
+                    key={size}
+                    style={[
+                      styles.sizeOption,
+                      selectedSize === size
+                        ? { backgroundColor: C.primary, borderColor: C.primary }
+                        : { backgroundColor: C.surface, borderColor: C.border },
+                    ]}
+                    onPress={() => {
+                      setSelectedSize(size);
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    }}
+                    activeOpacity={0.8}
+                  >
+                    <Text
+                      style={[
+                        styles.sizeOptionText,
+                        selectedSize === size
+                          ? { color: C.textInverse }
+                          : { color: C.text },
+                      ]}
+                    >
+                      {size}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          )}
+
           {/* Quantity */}
           <View style={styles.quantityRow}>
-  <Text style={[styles.quantityLabel, { color: C.textSecondary }]}>QUANTITY</Text>
-  <QuantityControl
-    value={quantity}
-    onDecrement={() => setQuantity(Math.max(1, quantity - 1))}
-    onIncrement={() => setQuantity(Math.min(product.stock, quantity + 1))}
-    min={1}
-    max={product.stock}
-  />
-</View>
+            <Text style={[styles.quantityLabel, { color: C.textSecondary }]}>QUANTITY</Text>
+            <QuantityControl
+              value={quantity}
+              onDecrement={() => setQuantity(Math.max(1, quantity - 1))}
+              onIncrement={() => setQuantity(Math.min(product.stock, quantity + 1))}
+              min={1}
+              max={product.stock}
+            />
+          </View>
 
           {/* Stock */}
-         {/* Stock with colored dot */}
-<View style={styles.stockRow}>
-  <View
-    style={[
-      styles.stockDot,
-      product.stock === 0
-        ? styles.stockDotOut
-        : product.stock < 5
-        ? styles.stockDotLow
-        : styles.stockDotIn,
-    ]}
-  />
-  <Text style={[styles.stock, { color: C.textSecondary }]}>
-    {product.stock > 5
-      ? `${product.stock} in stock`
-      : product.stock > 0
-      ? `Only ${product.stock} left!`
-      : 'Out of stock'}
-  </Text>
-</View>
+          {/* Stock with colored dot */}
+          <View style={styles.stockRow}>
+            <View
+              style={[
+                styles.stockDot,
+                product.stock === 0
+                  ? styles.stockDotOut
+                  : product.stock < 5
+                  ? styles.stockDotLow
+                  : styles.stockDotIn,
+              ]}
+            />
+            <Text style={[styles.stock, { color: C.textSecondary }]}>
+              {product.stock > 5
+                ? `${product.stock} in stock`
+                : product.stock > 0
+                ? `Only ${product.stock} left!`
+                : 'Out of stock'}
+            </Text>
+          </View>
         </View>
       </ScrollView>
 
       {/* Bottom CTA */}
       <View style={{ position: 'relative' }}>
-  {/* Flying dot — absolutely positioned over the button */}
-  <Animated.View
-    style={[
-      {
-        position: 'absolute',
-        top: -10,
-        alignSelf: 'center',
-        width: 16,
-        height: 16,
-        borderRadius: 8,
-        backgroundColor: C.accent,
-        zIndex: 99,
-      },
-      dotStyle,
-    ]}
-    pointerEvents="none"
-  />
+        {/* Flying dot — absolutely positioned over the button */}
+        <Animated.View
+          style={[
+            {
+              position: 'absolute',
+              top: -10,
+              alignSelf: 'center',
+              width: 16,
+              height: 16,
+              borderRadius: 8,
+              backgroundColor: C.accent,
+              zIndex: 99,
+            },
+            dotStyle,
+          ]}
+          pointerEvents="none"
+        />
 
-  <View style={[styles.bottomBar, { backgroundColor: C.surface, borderTopColor: C.border }]}>
-    <View style={styles.totalContainer}>
-      <Text style={[styles.totalLabel, { color: C.textLight }]}>TOTAL</Text>
-      <Text style={[styles.total, { color: C.text }]}>
-        €{(product.price * quantity).toFixed(2)}
-      </Text>
-    </View>
-    <TouchableOpacity
-      style={[
-        styles.addToCartBtn,
-        { backgroundColor: product.stock === 0 ? C.border : C.primary },
-      ]}
-      onPress={handleAddToCart}
-      disabled={product.stock === 0}
-      activeOpacity={0.85}
-    >
-      <Text style={[styles.addToCartText, { color: C.textInverse }]}>
-        {product.stock === 0 ? 'OUT OF STOCK' : 'ADD TO CART'}
-      </Text>
-    </TouchableOpacity>
-  </View>
-</View>
+        <View style={[styles.bottomBar, { backgroundColor: C.surface, borderTopColor: C.border }]}>
+          <View style={styles.totalContainer}>
+            <Text style={[styles.totalLabel, { color: C.textLight }]}>TOTAL</Text>
+            <Text style={[styles.total, { color: C.text }]}>
+              €{(product.price * quantity).toFixed(2)}
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={[
+              styles.addToCartBtn,
+              { backgroundColor: product.stock === 0 ? C.border : C.primary },
+            ]}
+            onPress={handleAddToCart}
+            disabled={product.stock === 0}
+            activeOpacity={0.85}
+          >
+            <Text style={[styles.addToCartText, { color: C.textInverse }]}>
+              {product.stock === 0 ? 'OUT OF STOCK' : 'ADD TO CART'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </SafeAreaView>
   );
 }
@@ -371,22 +424,48 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
   },
   stockRow: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  gap: 6,
-},
-stockDot: {
-  width: 8,
-  height: 8,
-  borderRadius: RADIUS.full,
-},
-stockDotIn: {
-  backgroundColor: '#22C55E', // Green
-},
-stockDotLow: {
-  backgroundColor: '#EF4444', // Red
-},
-stockDotOut: {
-  // Gray - will be set dynamically
-},
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  stockDot: {
+    width: 8,
+    height: 8,
+    borderRadius: RADIUS.full,
+  },
+  stockDotIn: {
+    backgroundColor: '#22C55E', // Green
+  },
+  stockDotLow: {
+    backgroundColor: '#EF4444', // Red
+  },
+  stockDotOut: {
+    backgroundColor: '#ccc', // Gray
+  },
+  sizeSection: {
+    paddingVertical: SPACING.sm,
+    gap: SPACING.sm,
+  },
+  sizeLabel: {
+    fontSize: 11,
+    letterSpacing: 2,
+    fontWeight: '600',
+  },
+  sizeOptions: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: SPACING.xs,
+  },
+  sizeOption: {
+    width: 48,
+    height: 48,
+    borderRadius: RADIUS.md,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sizeOptionText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
 });

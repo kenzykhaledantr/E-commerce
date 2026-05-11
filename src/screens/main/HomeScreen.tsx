@@ -122,15 +122,15 @@ export default function HomeScreen() {
     </View>
   );
 
+  const heroAnim = useScreenAnimation(0);
+  const categoryAnim = useScreenAnimation(1);
+  const newArrivalAnim = useScreenAnimation(2);
+
   // ── Main list data ─────────────────────────────────────────
   // We use a single FlatList with ListHeaderComponent so the
   // entire screen scrolls as one unit (no nested ScrollView)
 
-  function ListHeader() {
-    const heroAnim = useScreenAnimation(0);
-    const categoryAnim = useScreenAnimation(1);
-    const newArrivalAnim = useScreenAnimation(2);
-    return (
+  const renderListHeader = () => (
     <View>
       {/* Hero Banner */}
       <Animated.View style={heroAnim}>
@@ -192,49 +192,46 @@ export default function HomeScreen() {
       />
     </View>
   );
-  }
-
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: C.background }]} edges={['top']}>
       <AppHeader />
 
-      {isGridLoading ? (
-        <View style={styles.gridSkeletons}>
-          <ListHeader />
-          <View style={styles.gridRow}>
-            <SkeletonCard />
-            <SkeletonCard />
-          </View>
-          <View style={styles.gridRow}>
-            <SkeletonCard />
-            <SkeletonCard />
-          </View>
-        </View>
-      ) : (
-        <FlatList
-          data={gridProducts ?? []}
-          keyExtractor={(item) => item.id}
-           renderItem={renderGridItem}
-          numColumns={2}
-          {...FLATLIST_PERFORMANCE_PROPS} 
-          ListHeaderComponent={<ListHeader />}
-          contentContainerStyle={styles.gridContent}
-          columnWrapperStyle={styles.columnWrapper}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              tintColor={C.text}
-            />
-          }
-          ListEmptyComponent={
+      <FlatList
+        data={isGridLoading ? [] : (gridProducts ?? [])}
+        keyExtractor={(item) => item.id}
+        renderItem={renderGridItem}
+        numColumns={2}
+        {...FLATLIST_PERFORMANCE_PROPS} 
+        ListHeaderComponent={renderListHeader()}
+        contentContainerStyle={styles.gridContent}
+        columnWrapperStyle={styles.columnWrapper}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={C.text}
+          />
+        }
+        ListEmptyComponent={
+          isGridLoading ? (
+            <View>
+              <View style={styles.gridRow}>
+                <SkeletonCard />
+                <SkeletonCard />
+              </View>
+              <View style={styles.gridRow}>
+                <SkeletonCard />
+                <SkeletonCard />
+              </View>
+            </View>
+          ) : (
             <View style={styles.empty}>
               <Text style={[styles.emptyText, { color: C.textLight }]}>No products found</Text>
             </View>
-          }
-        />
-      )}
+          )
+        }
+      />
     </SafeAreaView>
   );
 }

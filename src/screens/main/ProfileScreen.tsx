@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../../../store/authStore';
 import { useOrders } from '../../../api/useOrders';
 import { useFavoritesStore } from '../../../store/favoritesStore';
@@ -30,19 +31,19 @@ export default function ProfileScreen() {
 
 const MENU_ITEMS = [
   {
-    icon:    '📍',
-    label:   'Saved Addresses',
-    onPress: () => navigation.navigate('SavedAddresses'),
+    iconName: 'location-outline' as const,
+    label:    'Saved Addresses',
+    onPress:  () => navigation.navigate('SavedAddresses'),
   },
   {
-    icon:    '💳',
-    label:   'Payment Methods',
-    onPress: () => navigation.navigate('PaymentMethods'),
+    iconName: 'card-outline' as const,
+    label:    'Payment Methods',
+    onPress:  () => navigation.navigate('PaymentMethods'),
   },
   {
-    icon:    '⚙️',
-    label:   'Account Settings',
-    onPress: () => navigation.navigate('AccountSettings'),
+    iconName: 'settings-outline' as const,
+    label:    'Account Settings',
+    onPress:  () => navigation.navigate('AccountSettings'),
   },
 ];
 
@@ -94,13 +95,21 @@ const MENU_ITEMS = [
           backgroundColor: C.surface,
           borderColor:     C.border,
         }]}>
-          <View style={styles.statItem}>
-            <Text style={[styles.statValue,  { color: C.text }]}>{orders?.length ?? 0}</Text>
-            <Text style={[styles.statLabel,  { color: C.textSecondary }]}>MY ORDERS</Text>
-            <Text style={[styles.statSub,    { color: C.textLight }]}>
-              {orders?.filter((o) => o.status === 'confirmed').length ?? 0} Active
-            </Text>
-          </View>
+          <TouchableOpacity
+  style={styles.statItem}
+  onPress={() => navigation.navigate('MyOrders')}
+  activeOpacity={0.7}
+>
+  <Text style={[styles.statValue, { color: C.text }]}>
+    {orders?.length ?? 0}
+  </Text>
+  <Text style={[styles.statLabel, { color: C.textSecondary }]}>
+    MY ORDERS
+  </Text>
+  <Text style={[styles.statSub, { color: C.textLight }]}>
+    View all →
+  </Text>
+</TouchableOpacity>
           <View style={[styles.statDivider, { backgroundColor: C.border }]} />
           <View style={styles.statItem}>
             <Text style={[styles.statValue,  { color: C.text }]}>{favoriteIds.length}</Text>
@@ -124,10 +133,10 @@ const MENU_ITEMS = [
               
             >
               <View style={styles.menuLeft}>
-                <Text style={styles.menuIcon}>{item.icon}</Text>
+                <Ionicons name={item.iconName} size={20} color={C.textSecondary} />
                 <Text style={[styles.menuLabel, { color: C.text }]}>{item.label}</Text>
               </View>
-              <Text style={[styles.menuArrow, { color: C.textLight }]}>›</Text>
+              <Ionicons name="chevron-forward" size={18} color={C.textLight} />
             </TouchableOpacity>
           ))}
 
@@ -138,7 +147,7 @@ const MENU_ITEMS = [
             activeOpacity={0.7}
           >
             <View style={styles.menuLeft}>
-              <Text style={[styles.menuIcon,{color:C.text}]}>↪</Text>
+              <Ionicons name="log-out-outline" size={20} color={C.error} />
               <Text style={[styles.menuLabel, { color: C.error }]}>Logout</Text>
             </View>
           </TouchableOpacity>
@@ -257,10 +266,8 @@ const styles = StyleSheet.create({
   },
   logoutItem: { borderBottomWidth: 0 },
   menuLeft: { flexDirection: 'row', alignItems: 'center', gap: SPACING.md },
-  menuIcon: { fontSize: 18, width: 28 },
   menuLabel: { fontSize: 15, color: COLORS.textPrimary },
   logoutLabel: { color: COLORS.error },
-  menuArrow: { fontSize: 20, color: COLORS.textLight },
   ordersSection: {
     backgroundColor: COLORS.white,
     marginTop: SPACING.sm,

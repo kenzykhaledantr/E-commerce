@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import { useCartStore } from '../../../store/cartStore';
 import CartItemCard from '../../../components/cart/CartItemCard';
 import { SPACING, RADIUS } from '../../../utils/constants';
@@ -71,14 +72,14 @@ export default function CartScreen() {
     return (
       <SafeAreaView style={[styles.safe, { backgroundColor: C.background }]}>
         <View style={[styles.header, { backgroundColor: C.surface, borderBottomColor: C.border }]}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={[styles.backText, { color: C.text }]}>←</Text>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40 }}>
+            <Ionicons name="arrow-back" size={24} color={C.text} />
           </TouchableOpacity>
           <Text style={[styles.headerTitle, { color: C.text }]}>YOUR CART</Text>
           <View style={{ width: 40 }} />
         </View>
         <View style={styles.emptyContainer}>
-          <Text style={[styles.emptyIcon, { color: C.textLight }]}>🛍</Text>
+          <Ionicons name="bag-handle-outline" size={64} color={C.textLight} style={{ marginBottom: SPACING.md }} />
           <Text style={[styles.emptyTitle, { color: C.text }]}>Your cart is empty</Text>
           <Text style={[styles.emptySubtitle, { color: C.textSecondary }]}>
             Add items to get started
@@ -163,7 +164,7 @@ export default function CartScreen() {
 
       {/* Looking for more */}
       <View style={[styles.lookingMore, { backgroundColor: C.card, borderColor: C.border }]}>
-        <Text style={[styles.lookingIcon, { color: C.textSecondary }]}>♡</Text>
+        <Ionicons name="heart-outline" size={28} color={C.textSecondary} style={{ marginBottom: SPACING.xs }} />
         <Text style={[styles.lookingTitle, { color: C.text }]}>Looking for more?</Text>
         <Text style={[styles.lookingSubtitle, { color: C.textSecondary }]}>
           Explore items from your wishlist or our latest premium arrivals.
@@ -179,8 +180,8 @@ export default function CartScreen() {
     <SafeAreaView style={[styles.safe, { backgroundColor: C.background }]}>
       {/* Header */}
       <View style={[styles.header, { backgroundColor: C.surface, borderBottomColor: C.border }]}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={[styles.backText, { color: C.text }]}>←</Text>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40 }}>
+          <Ionicons name="arrow-back" size={24} color={C.text} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: C.text }]}>YOUR CART</Text>
         <TouchableOpacity onPress={clearCart}>

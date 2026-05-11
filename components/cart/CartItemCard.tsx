@@ -8,6 +8,7 @@ import {
   Animated,
   StyleSheet,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useCartStore } from '../../store/cartStore';
 import { COLORS, SPACING, RADIUS } from '../../utils/constants';
 import type { CartItem } from '../../types';
@@ -70,7 +71,7 @@ interface CartItemCardProps {
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             style={styles.deleteBtn}
           >
-            <Text style={styles.deleteIcon}>🗑</Text>
+            <Ionicons name="trash-outline" size={16} color={COLORS.textPrimary} />
           </TouchableOpacity>
         </View>
 

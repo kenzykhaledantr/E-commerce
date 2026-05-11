@@ -1,5 +1,6 @@
 // src/screens/main/PaymentMethodsScreen.tsx
 import React, { useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
 import {
   View,
   Text,
@@ -55,7 +56,7 @@ export default function PaymentMethodsScreen() {
       {/* Header */}
       <View style={[styles.header, { backgroundColor: C.surface, borderBottomColor: C.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={[styles.backText, { color: C.text }]}>←</Text>
+          <Ionicons name="arrow-back" size={24} color={C.text} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: C.text }]}>PAYMENT METHODS</Text>
         <TouchableOpacity
@@ -97,7 +98,7 @@ export default function PaymentMethodsScreen() {
           }
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Text style={[styles.emptyIcon, { color: C.textLight }]}>💳</Text>
+              <Ionicons name="card-outline" size={56} color={C.textLight} />
               <Text style={[styles.emptyTitle, { color: C.text }]}>No payment methods</Text>
               <Text style={[styles.emptySubtitle, { color: C.textSecondary }]}>
                 Add a card for faster checkout
@@ -125,7 +126,7 @@ export default function PaymentMethodsScreen() {
                 style={[styles.addNewBtn, { backgroundColor: C.card, borderColor: C.border }]}
                 onPress={() => setModalVisible(true)}
               >
-                <Text style={[styles.addNewIcon, { color: C.textSecondary }]}>+</Text>
+                <Ionicons name="add-circle-outline" size={22} color={C.textSecondary} />
                 <Text style={[styles.addNewText, { color: C.textSecondary }]}>Add New Card</Text>
               </TouchableOpacity>
             ) : null
