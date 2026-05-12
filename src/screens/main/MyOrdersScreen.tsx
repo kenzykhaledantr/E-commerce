@@ -129,7 +129,11 @@ export default function MyOrdersScreen() {
               {filter === 'All' && (
                 <TouchableOpacity
                   style={[styles.shopBtn, { backgroundColor: C.primary }]}
-                  onPress={() => navigation.navigate('HomeScreen')}
+                  onPress={() => {
+  navigation.navigate('MainTabs', {
+    screen: 'Home',
+  });
+}}
                 >
                   <Text style={[styles.shopBtnText, { color: C.surface }]}>
                     START SHOPPING

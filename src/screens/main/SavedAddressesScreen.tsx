@@ -25,6 +25,9 @@ import AddressFormModal from '../../../components/address/AddressFormModal';
 import { COLORS, SPACING, RADIUS } from '../../../utils/constants';
 import type { Address } from '../../../types';
 import { useTheme } from '../../../hook/useTheme';
+import CustomAlert      from '../../../components/common/CustomAlert';
+import { useCustomAlert } from '../../../hook/useCustomAlert';
+
 
 export default function SavedAddressesScreen() {
   const navigation = useNavigation<any>();
@@ -38,6 +41,7 @@ export default function SavedAddressesScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   const { colors: C } = useTheme();
+  const { alertState, hideAlert, showError } = useCustomAlert();
 
   // ── Open modal for new address ─────────────────────────────
   const handleAddNew = () => {
@@ -68,11 +72,7 @@ const handleSave = async (formData: Omit<Address, 'id'>) => {
     setModalVisible(false);
     setEditingAddress(null);
   } catch (error: any) {
-    Alert.alert(
-      'Could not save address',
-      error.message ?? 'Please try again.',
-      [{ text: 'OK' }]
-    );
+    showError('Could Not Save', error.message ?? 'Please try again.');
   }
 };
 
@@ -81,6 +81,14 @@ const handleSave = async (formData: Omit<Address, 'id'>) => {
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: C.background }]}>
+      <CustomAlert
+        visible={alertState.visible}
+        type={alertState.type}
+        title={alertState.title}
+        message={alertState.message}
+        buttons={alertState.buttons}
+        onClose={hideAlert}
+      />
       {/* Header */}
       <View style={[styles.header, { backgroundColor: C.surface }]}>
         <TouchableOpacity

@@ -17,6 +17,8 @@ import { useFavoritesStore } from '../../../store/favoritesStore';
 import { logoutUser } from '../../../services/authService';
 import { COLORS, SPACING, RADIUS } from '../../../utils/constants';
 import { useTheme } from '../../../hook/useTheme';
+import CustomAlert      from '../../../components/common/CustomAlert';
+import { useCustomAlert } from '../../../hook/useCustomAlert';
 
 
 
@@ -28,6 +30,7 @@ export default function ProfileScreen() {
   const { data: orders } = useOrders();
   const favoriteIds = useFavoritesStore((s) => s.ids);
   const { colors: C } = useTheme();
+  const { alertState, hideAlert, showError,showWarning } = useCustomAlert();
 
 const MENU_ITEMS = [
   {
@@ -48,7 +51,7 @@ const MENU_ITEMS = [
 ];
 
   const handleLogout = async () => {
-    Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
+    showWarning('Sign Out', 'Are you sure you want to sign out?', [
       { text: 'Cancel', style: 'cancel' },
       {
         text: 'Sign Out',
@@ -66,6 +69,14 @@ const MENU_ITEMS = [
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: C.background }]}>
+      <CustomAlert
+        visible={alertState.visible}
+        type={alertState.type}
+        title={alertState.title}
+        message={alertState.message}
+        buttons={alertState.buttons}
+        onClose={hideAlert}
+      />
       <View style={[styles.header, {
         backgroundColor:  C.surface,
         borderBottomColor: C.border,

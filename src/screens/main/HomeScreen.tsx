@@ -8,6 +8,7 @@ import {
   Text,
   TouchableOpacity,
   Dimensions,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -24,6 +25,8 @@ import { useProducts, useNewArrivals, useProductsByCategory } from '../../../api
 import { useFavoritesStore } from '../../../store/favoritesStore';
 import { SPACING } from '../../../utils/constants';
 import type { Product, ProductCategory } from '../../../types';
+import { seedProducts } from '../../../services/seedProducts';
+
 
 import {
   keyExtractor,
@@ -39,6 +42,15 @@ export default function HomeScreen() {
   const newArrivalsRef = useRef<FlatList>(null);
   const { colors: C } = useTheme();
   const { toggle, isFavorite } = useFavoritesStore();
+
+//   const [seeding, setSeeding] = useState(false);
+
+// const handleSeed = async () => {
+//   setSeeding(true);
+//   await seedProducts();
+//   setSeeding(false);
+//   Alert.alert('Done!', '30 products added to Firestore.');
+// };
 
   // React Query hooks — automatic caching + loading states
   const {
@@ -136,6 +148,22 @@ export default function HomeScreen() {
       <Animated.View style={heroAnim}>
         <HeroBanner />
       </Animated.View>
+
+      {/* <TouchableOpacity
+  style={{
+    margin:           16,
+    padding:          14,
+    backgroundColor:  '#2D6A4F',
+    borderRadius:     8,
+    alignItems:       'center',
+  }}
+  onPress={handleSeed}
+  disabled={seeding}
+>
+  <Text style={{ color: 'white', fontWeight: '700' }}>
+    {seeding ? 'Seeding...' : '🌱 Seed 30 Products'}
+  </Text>
+</TouchableOpacity> */}
 
 
       {/* Categories */}
