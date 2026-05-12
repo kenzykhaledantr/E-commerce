@@ -19,6 +19,9 @@ import { useAuthStore } from '../../../store/authStore';
 import FormInput from '../../../components/common/FormInput';
 import { validators, validateForm } from '../../../utils/validation';
 import { useTheme } from '../../../hook/useTheme';
+import CustomAlert      from '../../../components/common/CustomAlert';
+import { useCustomAlert } from '../../../hook/useCustomAlert';
+
 
 export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
   const [email,    setEmail]    = useState('');
@@ -27,6 +30,7 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
   const [isLoading, setIsLoading] = useState(false);
   const { setUser } = useAuthStore();
   const { colors: C } = useTheme();
+  const { alertState, hideAlert, showError } = useCustomAlert();
 
   const handleLogin = async () => {
     // Clear previous errors
@@ -34,6 +38,8 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
 
     const emailErr    = validators.email(email);
     const passwordErr = validators.password(password);
+    
+
 
     if (emailErr || passwordErr) {
       setErrors({
@@ -54,7 +60,7 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
           : error.code === 'auth/too-many-requests'
           ? 'Too many attempts. Try again later.'
           : 'Login failed. Please try again.';
-      Alert.alert('Login Failed', message);
+      showError('Login Failed', message);
     } finally {
       setIsLoading(false);
     }
@@ -62,6 +68,16 @@ export default function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: C.background }]}>
+      <CustomAlert
+        visible={alertState.visible}
+        type={alertState.type}
+        title={alertState.title}
+        message={alertState.message}
+        buttons={alertState.buttons}
+        onClose={hideAlert}
+      />
+
+
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

@@ -18,6 +18,9 @@ import { useTheme }        from '../../../hook/useTheme';
 import { updateDisplayName, changePassword } from '../../../services/authService';
 import FormInput           from '../../../components/common/FormInput';
 import { SPACING, RADIUS } from '../../../utils/constants';
+import CustomAlert      from '../../../components/common/CustomAlert';
+import { useCustomAlert } from '../../../hook/useCustomAlert';
+
 
 type Section = 'name' | 'password' | null;
 
@@ -26,6 +29,8 @@ export default function AccountSettingsScreen() {
   const { colors, isDark, toggleTheme } = useTheme();
   const user         = useAuthStore((s) => s.user);
   const setUser      = useAuthStore((s) => s.setUser);
+
+  const { alertState, hideAlert, showError ,showSuccess } = useCustomAlert();
 
   // ── Name section ──────────────────────────────────────────
   const [newName,      setNewName]      = useState(user?.displayName ?? '');
@@ -48,11 +53,11 @@ export default function AccountSettingsScreen() {
   // ── Save name ──────────────────────────────────────────────
   const handleSaveName = async () => {
     if (!newName.trim()) {
-      Alert.alert('Validation', 'Name cannot be empty.');
+      showError('Validation', 'Name cannot be empty.');
       return;
     }
     if (newName.trim() === user?.displayName) {
-      Alert.alert('No change', 'That is already your current name.');
+      showError('No Change', 'That is already your current name.');
       return;
     }
     setNameLoading(true);
@@ -60,10 +65,10 @@ export default function AccountSettingsScreen() {
       await updateDisplayName(newName.trim());
       // Update Zustand store so UI reflects immediately
       if (user) setUser({ ...user, displayName: newName.trim() });
-      Alert.alert('✓ Updated', 'Your name has been updated.');
+      showSuccess('Name Updated', 'Your display name has been changed successfully.')
       setExpanded(null);
     } catch (e: any) {
-      Alert.alert('Error', e.message ?? 'Failed to update name.');
+      showError('Error', e.message ?? 'Failed to update name.');
     } finally {
       setNameLoading(false);
     }
@@ -72,21 +77,21 @@ export default function AccountSettingsScreen() {
   // ── Save password ──────────────────────────────────────────
   const handleSavePassword = async () => {
     if (!currentPass || !newPass || !confirmPass) {
-      Alert.alert('Validation', 'Please fill in all password fields.');
+      showError('Validation', 'Please fill in all password fields.');
       return;
     }
     if (newPass.length < 6) {
-      Alert.alert('Validation', 'New password must be at least 6 characters.');
+      showError('Validation', 'New password must be at least 6 characters.');
       return;
     }
     if (newPass !== confirmPass) {
-      Alert.alert('Validation', 'New passwords do not match.');
+      showError('Validation', 'New passwords do not match.');
       return;
     }
     setPassLoading(true);
     try {
       await changePassword(currentPass, newPass);
-      Alert.alert('✓ Updated', 'Your password has been changed.');
+      showSuccess('Password Updated', 'Your password has been changed.');
       setCurrentPass('');
       setNewPass('');
       setConfirmPass('');
@@ -97,7 +102,7 @@ export default function AccountSettingsScreen() {
         e.code === 'auth/invalid-credential'
           ? 'Current password is incorrect.'
           : e.message ?? 'Failed to change password.';
-      Alert.alert('Error', msg);
+      showError('Error', msg);
     } finally {
       setPassLoading(false);
     }
@@ -117,6 +122,14 @@ export default function AccountSettingsScreen() {
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: C.background }]}>
       {/* Header */}
+      <CustomAlert
+        visible={alertState.visible}
+        type={alertState.type}
+        title={alertState.title}
+        message={alertState.message}
+        buttons={alertState.buttons}
+        onClose={hideAlert}
+      />
       <View style={[styles.header, {
         backgroundColor: C.surface,
         borderBottomColor: C.border,

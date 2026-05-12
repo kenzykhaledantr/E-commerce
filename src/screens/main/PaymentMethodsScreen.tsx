@@ -24,6 +24,8 @@ import VisualCard    from '../../../components/payment/VisualCard';
 import { SPACING, RADIUS } from '../../../utils/constants';
 import { useTheme } from '../../../hook/useTheme';
 import type { PaymentCard } from '../../../types';
+import CustomAlert      from '../../../components/common/CustomAlert';
+import { useCustomAlert } from '../../../hook/useCustomAlert';
 
 export default function PaymentMethodsScreen() {
   const navigation = useNavigation<any>();
@@ -35,13 +37,14 @@ export default function PaymentMethodsScreen() {
   const setDefault = useSetDefaultCard();
 
   const [modalVisible, setModalVisible] = useState(false);
+  const { alertState, hideAlert, showError } = useCustomAlert();
 
   const handleSave = async (cardData: Omit<PaymentCard, 'id'>) => {
     try {
       await addCard.mutateAsync(cardData);
       setModalVisible(false);
     } catch (e: any) {
-      Alert.alert(
+      showError(
         'Could not save card',
         e.message ?? 'Please try again.'
       );

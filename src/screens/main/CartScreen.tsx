@@ -16,6 +16,9 @@ import CartItemCard from '../../../components/cart/CartItemCard';
 import { SPACING, RADIUS } from '../../../utils/constants';
 import { useTheme } from '../../../hook/useTheme';
 import type { CartItem } from '../../../types';
+import CustomAlert      from '../../../components/common/CustomAlert';
+import { useCustomAlert } from '../../../hook/useCustomAlert';
+
 
 const DELIVERY_METHODS = [
   {
@@ -41,6 +44,7 @@ export default function CartScreen() {
   const [selectedDelivery, setSelectedDelivery] = React.useState(
     DELIVERY_METHODS[0]
   );
+    const { alertState, hideAlert, showError } = useCustomAlert();
 
   // Animate checkout button
   const btnScale = useRef(new Animated.Value(1)).current;
@@ -186,6 +190,7 @@ export default function CartScreen() {
         <Text style={[styles.headerTitle, { color: C.text }]}>YOUR CART</Text>
         <TouchableOpacity onPress={clearCart}>
           <Text style={[styles.clearText, { color: C.textSecondary }]}>CLEAR</Text>
+          
         </TouchableOpacity>
       </View>
 

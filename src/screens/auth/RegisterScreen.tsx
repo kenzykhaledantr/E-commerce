@@ -18,6 +18,9 @@ import { COLORS, SPACING, RADIUS } from '../../../utils/constants';
 import { registerUser } from '../../../services/authService';
 import { useAuthStore } from '../../../store/authStore';
 import { sendWelcomeNotification } from '../../../services/notificationService';
+import CustomAlert      from '../../../components/common/CustomAlert';
+import { useCustomAlert } from '../../../hook/useCustomAlert';
+
 
 export default function RegisterScreen({ navigation }: AuthScreenProps<'Register'>) {
   const [displayName, setDisplayName] = useState('');
@@ -26,18 +29,19 @@ export default function RegisterScreen({ navigation }: AuthScreenProps<'Register
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { setUser } = useAuthStore();
+  const { alertState, hideAlert, showError } = useCustomAlert();
 
   const handleRegister = async () => {
     if (!displayName.trim() || !email.trim() || !password.trim()) {
-      Alert.alert('Missing fields', 'Please fill in all fields.');
+      showError('Missing Fields',   'Please fill in all fields.');
       return;
     }
     if (password !== confirmPassword) {
-      Alert.alert('Password mismatch', 'Passwords do not match.');
+      showError('Password Mismatch', 'Passwords do not match.');
       return;
     }
     if (password.length < 6) {
-      Alert.alert('Weak password', 'Password must be at least 6 characters.');
+      showError('Weak Password', 'Password must be at least 6 characters.');
       return;
     }
 
@@ -51,7 +55,7 @@ export default function RegisterScreen({ navigation }: AuthScreenProps<'Register
         error.code === 'auth/email-already-in-use'
           ? 'This email is already registered.'
           : 'Registration failed. Please try again.';
-      Alert.alert('Registration Failed', message);
+      showError('Registration Failed', message);
     } finally {
       setIsLoading(false);
     }
@@ -59,6 +63,14 @@ export default function RegisterScreen({ navigation }: AuthScreenProps<'Register
 
   return (
     <SafeAreaView style={styles.safe}>
+      <CustomAlert
+        visible={alertState.visible}
+        type={alertState.type}
+        title={alertState.title}
+        message={alertState.message}
+        buttons={alertState.buttons}
+        onClose={hideAlert}
+      />
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

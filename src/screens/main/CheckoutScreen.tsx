@@ -23,6 +23,9 @@ import { sendOrderConfirmationNotification } from '../../../services/notificatio
 import { SPACING, RADIUS } from '../../../utils/constants';
 import { useTheme } from '../../../hook/useTheme';
 import type { Address } from '../../../types';
+import CustomAlert      from '../../../components/common/CustomAlert';
+import { useCustomAlert } from '../../../hook/useCustomAlert';
+
 
 const STEPS = ['Shipping', 'Delivery', 'Payment'];
 
@@ -54,6 +57,12 @@ export default function CheckoutScreen() {
   const { items, totalPrice, clearCart } = useCartStore();
   const user        = useAuthStore((s) => s.user);
   const createOrder = useCreateOrder();
+    const {
+    alertState,
+    hideAlert,
+    showError,
+    showSuccess,
+  } = useCustomAlert();
 
   // ── Fetch saved addresses from Firebase ───────────────────
   const { data: savedAddresses, isLoading: loadingAddresses } =
@@ -78,9 +87,9 @@ export default function CheckoutScreen() {
 
   const handlePlaceOrder = async () => {
     if (!selectedAddress) {
-      Alert.alert(
-        'No address selected',
-        'Please select a shipping address.',
+      showError(
+        'No Address Selected',
+        'Please select a shipping address to continue.'
       );
       setStep(0);
       return;
@@ -98,7 +107,10 @@ export default function CheckoutScreen() {
       await sendOrderConfirmationNotification(orderId, total);
       navigation.replace('OrderSuccess', { orderId });
     } catch (e) {
-      Alert.alert('Error', 'Failed to place order. Please try again.');
+      showError(
+        'Payment Failed',
+        "We couldn't process your transaction. Please verify your payment details and try again."
+      );
     }
   };
 
@@ -264,7 +276,10 @@ export default function CheckoutScreen() {
           ]}
           onPress={() => {
             if (!selectedAddress) {
-              Alert.alert('Select an address', 'Please select a shipping address.');
+              showError(
+        'No Address Selected',
+        'Please select a shipping address to continue.'
+      );
               return;
             }
             setStep(1);

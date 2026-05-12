@@ -124,10 +124,7 @@ export default function AppHeader({ showSearch = true }: { showSearch?: boolean 
           },
         ]}
       >
-        {/* Menu icon */}
-        <TouchableOpacity style={styles.iconBtn} activeOpacity={0.7}>
-          <Ionicons name="menu-outline" size={24} color={C.text} />
-        </TouchableOpacity>
+        
 
         {/* Brand — hide when search is open */}
         {!searchOpen && (
